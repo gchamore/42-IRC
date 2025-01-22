@@ -11,6 +11,8 @@
 #include <cstdlib>
 #include <sstream>
 
+const std::string AUTH_COMMAND = "PASS";
+
 void setup_server(int &server_fd, int port)
 {
 	sockaddr_in server_address;
@@ -63,6 +65,15 @@ void setup_server(int &server_fd, int port)
 	std::cout << "Server setup complete. Listening on port " << port << std::endl;
 }
 
+// Function to trim leading and trailing whitespaces from a string
+std::string trim(const std::string &str) {
+    size_t first = str.find_first_not_of(' ');
+    if (first == std::string::npos)
+        return "";
+    size_t last = str.find_last_not_of(' ');
+    return str.substr(first, last - first + 1);
+}
+
 int main(int argc, char **argv)
 {
 	if (argc != 3)
@@ -72,6 +83,7 @@ int main(int argc, char **argv)
 	}
 
 	int port;
+	// Convert the port number from string to integer
 	std::stringstream ss(argv[1]);
 	if (!(ss >> port))
 	{
@@ -79,7 +91,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	std::string password = argv[2];
+	std::string server_password = argv[2];
 
 	int server_fd;
 	// create bind listen on the server socket
@@ -90,7 +102,11 @@ int main(int argc, char **argv)
 	pollfd server_poll_fd = {server_fd, POLLIN, 0};
 	poll_fds.push_back(server_poll_fd);
 
+	// Map to store client data and authentication status username nickname 
 	std::map<int, std::string> client_data;
+	std::map<int, bool> client_authenticated;
+	std::map<int, std::string> client_nicknames;
+	std::map<int, std::string> client_usernames;
 
 	while (true)
 	{
@@ -123,6 +139,16 @@ int main(int argc, char **argv)
 
 				// Initialize the client's buffer
 				client_data[client_fd] = "";
+				client_authenticated[client_fd] = false;
+				// Send a welcome message with command documentation
+				std::string welcome_message =
+					"Welcome to the server!\n"
+					"Please authenticate using PASS <password>.\n"
+					"After authentication, you can use the following commands:\n"
+					"- NICK <nickname>: Set your nickname.\n"
+					"- USER <username>: Complete your login.\n";
+				send(client_fd, welcome_message.c_str(), welcome_message.size(), 0);
+
 				std::cout << "New client connected: " << client_fd << std::endl;
 			}
 		}
@@ -131,18 +157,27 @@ int main(int argc, char **argv)
 		{
 			if (poll_fds[i].revents & POLLIN)
 			{
+				// Read data from the client socket
 				int client_fd = poll_fds[i].fd;
 				char buffer[1024];
 				ssize_t bytes_read = recv(client_fd, buffer, sizeof(buffer), 0);
-
-				if (bytes_read <= 0)
+				
+				// Handle disconnection
+				if (bytes_read == 0)
 				{
 					// Client disconnected are removed from the poll vector and client data map
 					std::cout << "Client disconnected: " << client_fd << std::endl;
 					close(client_fd);
 					poll_fds.erase(poll_fds.begin() + i);
 					client_data.erase(client_fd);
+					client_authenticated.erase(client_fd);
+					client_nicknames.erase(client_fd);
 					--i; // Adjust index after removal
+				}
+				// Handle receive error
+				else if (bytes_read < 0)
+				{
+					perror("Recv failed");
 				}
 				else
 				{
@@ -157,11 +192,111 @@ int main(int argc, char **argv)
 						std::string command = client_data[client_fd].substr(0, pos);
 						client_data[client_fd].erase(0, pos + 1);
 
-						std::cout << "Received command from client " << client_fd << ": " << command << std::endl;
+						//normalize the command
+						std::cout << "Raw command from client " << client_fd << ": " << command << std::endl;
+						command = trim(command);
+						std::cout << "Normalized command: " << command << std::endl;
+						if (command.empty())
+						{
+							std::cerr << "Error: Empty command received from client " << client_fd << std::endl;
+							continue;
+						}
+						// Handle authentication
+						if (!client_authenticated[client_fd])
+						{
+							// Check if the command is an authentication command
+							if (command.find(AUTH_COMMAND) == 0)
+							{
+								// Check if the password is provided
+								if (command.size() > AUTH_COMMAND.size() + 1)
+								{
+									std::string received_password = command.substr(AUTH_COMMAND.size() + 1);
+									// Check if the password is correct
+									if (received_password == server_password)
+									{
+										client_authenticated[client_fd] = true;
+										std::string response = "Authentication successful\n";
+										send(client_fd, response.c_str(), response.size(), 0);
+										std::cout << "Client " << client_fd << " authenticated." << std::endl;
+									}
+									else
+									{
+										std::string response = "Authentication failed\n";
+										send(client_fd, response.c_str(), response.size(), 0);
+										close(client_fd);
+										poll_fds.erase(poll_fds.begin() + i);
+										client_data.erase(client_fd);
+										client_authenticated.erase(client_fd);
+										client_nicknames.erase(client_fd);
+										--i;
+									}
+								}
+								else
+								{
+									std::string response = "Please provide a password.   Use PASS <password>\n";
+									send(client_fd, response.c_str(), response.size(), 0);
+								}
+							}
+							else
+							{
+								std::string response = "Please authenticate using PASS <password>\n";
+								send(client_fd, response.c_str(), response.size(), 0);
+							}
+						}
+						else
+						{
+							// Handle NICK/USER commands after authentication
+							if (command.find("NICK") == 0)
+							{
+								std::string nickname = command.substr(5);
+								if (nickname.empty() || nickname.find(' ') != std::string::npos)
+								{
+									std::string response = "Error: Invalid nickname format. Use NICK <nickname>\n";
+									send(client_fd, response.c_str(), response.size(), 0);
+								}
+								else
+								{
+									client_nicknames[client_fd] = nickname;
+									std::string response = "Nickname set to: " + nickname + "\n";
+									send(client_fd, response.c_str(), response.size(), 0);
+								}
+							}
+							// Handle USER command
+							else if (command.find("USER") == 0)
+							{
+								if (client_nicknames[client_fd].empty())
+								{
+									std::string response = "Error: Please set a nickname using NICK <nickname> before USER.\n";
+									send(client_fd, response.c_str(), response.size(), 0);
+								}
+								else
+								{
+									std::string username = command.substr(5);
+									if (username.empty() || username.find(' ') != std::string::npos)
+									{
+										std::string response = "Error: Invalid username format. Use USER <username>\n";
+										send(client_fd, response.c_str(), response.size(), 0);
+									}
+									else
+									{
+										client_usernames[client_fd] = username;
 
-						// Echo the command back as a simple response
-						std::string response = "Echo: " + command + "\n";
-						send(client_fd, response.c_str(), response.size(), 0);
+										// Check if login is complete
+										if (client_usernames[client_fd].empty() && client_nicknames[client_fd].empty())
+										{
+											std::string response = "Welcome, " + client_nicknames[client_fd] + "!\n";
+											send(client_fd, response.c_str(), response.size(), 0);
+											std::cout << "Client " << client_fd << " has completed login with username: " << username << std::endl;
+										}
+									}
+								}
+							}
+							else
+							{
+								std::string response = "Unknown command\n";
+								send(client_fd, response.c_str(), response.size(), 0);
+							}
+						}
 					}
 				}
 			}
