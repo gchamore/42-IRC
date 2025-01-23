@@ -248,45 +248,68 @@ int main(int argc, char **argv)
 							// Handle NICK/USER commands after authentication
 							if (command.find("NICK") == 0)
 							{
-								std::string nickname = command.substr(5);
-								if (nickname.empty() || nickname.find(' ') != std::string::npos)
+								//check for missing nickname
+								if (command.size() <= 5)
 								{
-									std::string response = "Error: Invalid nickname format. Use NICK <nickname>\n";
+									std::string response = "Error: Please provide a nickname. Use NICK <nickname>\n";
 									send(client_fd, response.c_str(), response.size(), 0);
+									std::cerr << "Error: Client " << client_fd << " sent NICK without an argument.\n";
 								}
 								else
 								{
-									client_nicknames[client_fd] = nickname;
-									std::string response = "Nickname set to: " + nickname + "\n";
-									send(client_fd, response.c_str(), response.size(), 0);
+									std::string nickname = command.substr(5);
+									// check for invalid nickname
+									if (nickname.empty() || nickname.find(' ') != std::string::npos)
+									{
+										std::string response = "Error: Invalid nickname format. Use NICK <nickname>\n";
+										send(client_fd, response.c_str(), response.size(), 0);
+									}
+									else
+									{
+										client_nicknames[client_fd] = nickname;
+										std::string response = "Nickname set to: " + nickname + "\n";
+										send(client_fd, response.c_str(), response.size(), 0);
+									}
 								}
 							}
 							// Handle USER command
 							else if (command.find("USER") == 0)
 							{
-								if (client_nicknames[client_fd].empty())
+								//check for missing username
+								if (command.size() <= 5)
 								{
-									std::string response = "Error: Please set a nickname using NICK <nickname> before USER.\n";
+									std::string response = "Error: Please provide a username. Use USER <username>\n";
 									send(client_fd, response.c_str(), response.size(), 0);
+									std::cerr << "Error: Client " << client_fd << " sent USER without an argument.\n";
 								}
 								else
 								{
-									std::string username = command.substr(5);
-									if (username.empty() || username.find(' ') != std::string::npos)
+									//check if the nickname is set before the username
+									if (client_nicknames[client_fd].empty())
 									{
-										std::string response = "Error: Invalid username format. Use USER <username>\n";
+										std::string response = "Error: Please set a nickname using NICK <nickname> before USER.\n";
 										send(client_fd, response.c_str(), response.size(), 0);
 									}
 									else
 									{
-										client_usernames[client_fd] = username;
-
-										// Check if login is complete
-										if (client_usernames[client_fd].empty() && client_nicknames[client_fd].empty())
+										std::string username = command.substr(5);
+										//check for invalid username
+										if (username.empty() || username.find(' ') != std::string::npos)
 										{
-											std::string response = "Welcome, " + client_nicknames[client_fd] + "!\n";
+											std::string response = "Error: Invalid username format. Use USER <username>\n";
 											send(client_fd, response.c_str(), response.size(), 0);
-											std::cout << "Client " << client_fd << " has completed login with username: " << username << std::endl;
+										}
+										else
+										{
+											client_usernames[client_fd] = username;
+
+											// Check if login is complete
+											if (!client_usernames[client_fd].empty() && !client_nicknames[client_fd].empty())
+											{
+												std::string response = "Welcome, " + client_nicknames[client_fd] + "!\n";
+												send(client_fd, response.c_str(), response.size(), 0);
+												std::cout << "Client " << client_fd << " has completed login with username: " << username << std::endl;
+											}
 										}
 									}
 								}
