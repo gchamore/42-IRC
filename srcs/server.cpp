@@ -1,17 +1,10 @@
-#include <iostream>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <cstring>
-#include <cstdio>
-#include <fcntl.h>
-#include <poll.h>
-#include <vector>
-#include <map>
-#include <cstdlib>
-#include <sstream>
+#include "Server.hpp"
+#include "Client.hpp"
+#include "CommandParser.hpp"
+#include "Channel.hpp"
 
 const std::string AUTH_COMMAND = "PASS";
+void handleCommand(const CommandParser::ParsedCommand& command, Client& client, const std::string& server_password);
 
 void setup_server(int &server_fd, int port)
 {
@@ -65,48 +58,9 @@ void setup_server(int &server_fd, int port)
 	std::cout << "Server setup complete. Listening on port " << port << std::endl;
 }
 
-// Function to trim leading and trailing whitespaces from a string
-std::string trim(const std::string &str) {
-    size_t first = str.find_first_not_of(' ');
-    if (first == std::string::npos)
-        return "";
-    size_t last = str.find_last_not_of(' ');
-    return str.substr(first, last - first + 1);
-}
-
-int main(int argc, char **argv)
+void server(int server_fd, std::vector<pollfd> poll_fds, std::string server_password)
 {
-	if (argc != 3)
-	{
-		std::cerr << "Usage: " << argv[0] << " <port> <password>" << std::endl;
-		return 1;
-	}
-
-	int port;
-	// Convert the port number from string to integer
-	std::stringstream ss(argv[1]);
-	if (!(ss >> port))
-	{
-		std::cerr << "Error: Invalid port number." << std::endl;
-		return 1;
-	}
-
-	std::string server_password = argv[2];
-
-	int server_fd;
-	// create bind listen on the server socket
-	setup_server(server_fd, port);
-
-	std::vector<pollfd> poll_fds;
-	// Add the server socket to the poll vector
-	pollfd server_poll_fd = {server_fd, POLLIN, 0};
-	poll_fds.push_back(server_poll_fd);
-
-	// Map to store client data and authentication status username nickname 
-	std::map<int, std::string> client_data;
-	std::map<int, bool> client_authenticated;
-	std::map<int, std::string> client_nicknames;
-	std::map<int, std::string> client_usernames;
+	std::map<int, Client> clients;
 
 	while (true)
 	{
@@ -118,7 +72,7 @@ int main(int argc, char **argv)
 			break;
 		}
 
-		// Check if the server socket has incoming connections
+		// Handle new connections
 		if (poll_fds[0].revents & POLLIN)
 		{
 			sockaddr_in client_address;
@@ -136,10 +90,8 @@ int main(int argc, char **argv)
 				// Add the new client to the poll vector
 				pollfd client_poll_fd = {client_fd, POLLIN, 0};
 				poll_fds.push_back(client_poll_fd);
+				clients[client_fd] = Client(client_fd);
 
-				// Initialize the client's buffer
-				client_data[client_fd] = "";
-				client_authenticated[client_fd] = false;
 				// Send a welcome message with command documentation
 				std::string welcome_message =
 					"Welcome to the server!\n"
@@ -155,13 +107,14 @@ int main(int argc, char **argv)
 
 		for (size_t i = 1; i < poll_fds.size(); ++i)
 		{
+			int client_fd = poll_fds[i].fd;
+
 			if (poll_fds[i].revents & POLLIN)
 			{
 				// Read data from the client socket
-				int client_fd = poll_fds[i].fd;
 				char buffer[1024];
 				ssize_t bytes_read = recv(client_fd, buffer, sizeof(buffer), 0);
-				
+
 				// Handle disconnection
 				if (bytes_read == 0)
 				{
@@ -169,9 +122,7 @@ int main(int argc, char **argv)
 					std::cout << "Client disconnected: " << client_fd << std::endl;
 					close(client_fd);
 					poll_fds.erase(poll_fds.begin() + i);
-					client_data.erase(client_fd);
-					client_authenticated.erase(client_fd);
-					client_nicknames.erase(client_fd);
+					clients.erase(client_fd);
 					--i; // Adjust index after removal
 				}
 				// Handle receive error
@@ -181,71 +132,35 @@ int main(int argc, char **argv)
 				}
 				else
 				{
-					// Handle client data
-					buffer[bytes_read] = '\0';
-					client_data[client_fd] += buffer;
-
-					// Process complete commands ending with '\n'
-					size_t pos;
-					while ((pos = client_data[client_fd].find('\n')) != std::string::npos)
+					// Append the received data to the client buffer
+					clients[client_fd].appendToBuffer(std::string(buffer, bytes_read));
+					while (clients[client_fd].hasCommand())
 					{
-						std::string command = client_data[client_fd].substr(0, pos);
-						client_data[client_fd].erase(0, pos + 1);
 
-						//normalize the command
-						std::cout << "Raw command from client " << client_fd << ": " << command << std::endl;
-						command = trim(command);
-						std::cout << "Normalized command: " << command << std::endl;
-						if (command.empty())
+						try
 						{
-							std::cerr << "Error: Empty command received from client " << client_fd << std::endl;
-							continue;
-						}
-						// Handle authentication
-						if (!client_authenticated[client_fd])
-						{
-							// Check if the command is an authentication command
-							if (command.find(AUTH_COMMAND) == 0)
+							std::string command = clients[client_fd].popCommand();
+							auto parsed_commands = CommandParser::parse(command);
+
+							// Process complete commands ending with '\n'
+							for (const auto &parsed_command : parsed_commands)
 							{
-								// Check if the password is provided
-								if (command.size() > AUTH_COMMAND.size() + 1)
-								{
-									std::string received_password = command.substr(AUTH_COMMAND.size() + 1);
-									// Check if the password is correct
-									if (received_password == server_password)
-									{
-										client_authenticated[client_fd] = true;
-										std::string response = "Authentication successful\n";
-										send(client_fd, response.c_str(), response.size(), 0);
-										std::cout << "Client " << client_fd << " authenticated." << std::endl;
-									}
-									else
-									{
-										std::string response = "Authentication failed\n";
-										send(client_fd, response.c_str(), response.size(), 0);
-										close(client_fd);
-										poll_fds.erase(poll_fds.begin() + i);
-										client_data.erase(client_fd);
-										client_authenticated.erase(client_fd);
-										client_nicknames.erase(client_fd);
-										--i;
-									}
-								}
-								else
-								{
-									std::string response = "Please provide a password.   Use PASS <password>\n";
-									send(client_fd, response.c_str(), response.size(), 0);
-								}
-							}
-							else
-							{
-								std::string response = "Please authenticate using PASS <password>\n";
-								send(client_fd, response.c_str(), response.size(), 0);
+								handleCommand(parsed_command, clients[client_fd], server_password);
 							}
 						}
-						else
+						catch (const std::exception &e)
 						{
-							// Handle NICK/USER commands after authentication
+							std::cerr << "Error parsing commands: " << e.what() << std::endl;
+						}
+					}
+				}
+		}
+	}
+	// Close the server socket
+	close(server_fd);
+}
+
+/*// Handle NICK/USER commands after authentication
 							if (command.find("NICK") == 0)
 							{
 								//check for missing nickname
@@ -313,20 +228,60 @@ int main(int argc, char **argv)
 										}
 									}
 								}
-							}
+								}
 							else
 							{
 								std::string response = "Unknown command\n";
 								send(client_fd, response.c_str(), response.size(), 0);
+							}*/
+
+/*std::string command = clients[client_fd].popCommand();
+						std::cout << "Raw command from client " << client_fd << ": " << command << std::endl;
+						if (command.empty())
+						{
+							std::cerr << "Error: Empty command received from client " << client_fd << std::endl;
+							continue;
+						}
+						// Handle authentication
+						if (!clients[client_fd].authenticated())
+						{
+							// Check if the command is an authentication command
+							if (command.find(AUTH_COMMAND) == 0)
+							{
+								// Check if the password is provided
+								if (command.size() > AUTH_COMMAND.size() + 1)
+								{
+									std::string received_password = command.substr(AUTH_COMMAND.size() + 1);
+									// Check if the password is correct
+									if (received_password == server_password)
+									{
+										clients[client_fd].authenticate();
+										std::string response = "Authentication successful\n";
+										send(client_fd, response.c_str(), response.size(), 0);
+										std::cout << "Client " << client_fd << " authenticated." << std::endl;
+									}
+									else
+									{
+										std::string response = "Authentication failed\n";
+										send(client_fd, response.c_str(), response.size(), 0);
+										close(client_fd);
+										poll_fds.erase(poll_fds.begin() + i);
+										clients.erase(client_fd);
+										--i;
+									}
+								}
+								else
+								{
+									std::string response = "Please provide a password.   Use PASS <password>\n";
+									send(client_fd, response.c_str(), response.size(), 0);
+								}
+							}
+							else
+							{
+								std::string response = "Please authenticate using PASS <password>\n";
+								send(client_fd, response.c_str(), response.size(), 0);
 							}
 						}
-					}
-				}
-			}
-		}
-	}
-	// Close the server socket
-	close(server_fd);
-
-	return 0;
-}
+						else
+						{
+						}*/

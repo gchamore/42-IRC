@@ -15,50 +15,63 @@
 #include <sstream>
 #include <algorithm>
 
-CommandParser::ParsedCommand CommandParser::parse(const std::string& rawMessage)
+std::vector<CommandParser::ParsedCommand> CommandParser::parse(const std::string &rawMessage)
 {
-    if (rawMessage.empty())
-    {
-        throw std::invalid_argument("Empty message");
-    }
-    std::istringstream iss(rawMessage);
-    ParsedCommand command;
-    std::string token;
+	if (rawMessage.empty())
+	{
+		throw std::invalid_argument("Empty message");
+	}
 
-    // Parse le prefix
-    if (rawMessage[0] == ':')
-    {
-        iss >> token;
-        command.prefix = token.substr(1);
-    }
+	std::istringstream iss(rawMessage);
+	std::string line;
+	std::vector<ParsedCommand> commands;
 
-    // Parse la commande
-    if (!(iss >> command.command))
-    {
-        throw std::invalid_argument("Invalid command");
-    }
+	while (std::getline(iss, line, '\n')) // Split by newline
+	{
+		if (line.empty())
+			continue;
 
-    // Vérification des commandes valides
-    const std::string validCommandsArray[] = {"NICK", "USER", "JOIN", "PRIVMSG", "COMMAND"};
-    const std::vector<std::string> validCommands(validCommandsArray, validCommandsArray + sizeof(validCommandsArray) / sizeof(validCommandsArray[0]));
-    if (std::find(validCommands.begin(), validCommands.end(), command.command) == validCommands.end())
-    {
-        throw std::invalid_argument("Invalid command");
-    }
+		std::istringstream lineStream(line);
+		ParsedCommand command;
+		std::string token;
 
-    // Parse les parameters
-    while (iss >> token)
-    {
-        if (token[0] == ':')
-        {
-            std::string trailing;
-            std::getline(iss, trailing);
-            command.params.push_back(token.substr(1) + trailing);
-            break;
-        } else
-        {
-            command.params.push_back(token);
-        }
-    }
-    return command;
-}
+		// Parse le prefix
+		if (line[0] == ':')
+		{
+			lineStream >> token;
+			command.prefix = token.substr(1);
+		}
+
+		// Parse la commande
+		if (!(lineStream >> command.command))
+		{
+			throw std::invalid_argument("Invalid command");
+		}
+
+		// Vérification des commandes valides
+		const std::string validCommandsArray[] = {"NICK", "USER", "JOIN", "PRIVMSG", "COMMAND"};
+		const std::vector<std::string> validCommands(validCommandsArray, validCommandsArray + sizeof(validCommandsArray) / sizeof(validCommandsArray[0]));
+		if (std::find(validCommands.begin(), validCommands.end(), command.command) == validCommands.end())
+		{
+			throw std::invalid_argument("Invalid command");
+		}
+
+		// Parse les parameters
+		while (lineStream >> token)
+		{
+			if (token[0] == ':')
+			{
+				std::string trailing;
+				std::getline(iss, trailing);
+				command.params.push_back(token.substr(1) + trailing);
+				break;
+			}
+			else
+			{
+				command.params.push_back(token);
+			}
+		}
+		commands.push_back(command);
+	}
+		return commands;
+	}

@@ -26,7 +26,7 @@ public:
         std::vector<std::string> params;
     };
 
-    static ParsedCommand parse(const std::string& rawMessage);
+    static std::vector<CommandParser::ParsedCommand> parse(const std::string& rawMessage);
 };
 
 #endif

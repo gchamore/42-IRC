@@ -13,85 +13,94 @@
 #include "../includes/CommandParser.hpp"
 #include "../includes/Client.hpp"
 #include "../includes/Channel.hpp"
+#include "../includes/Server.hpp"
 #include <iostream>
+#include <sstream>
 #include <map>
 
 std::map<std::string, Channel> channels;
 
-void handleCommand(const CommandParser::ParsedCommand& command, Client& client)
+void handleCommand(const CommandParser::ParsedCommand& command, Client& client, const std::string& server_password)
 {
-    if (command.command == "NICK")
+    if (!client.authenticated() && command.command == "PASS")
     {
-        client.setNickname(command.params[0]);
+        client.authenticate(server_password, command.params[0]);
     }
-    else if (command.command == "USER")
+    else if (client.authenticated())
     {
-        client.setUsername(command.params[0]);
-    }
-    else if (command.command == "JOIN")
-    {
-        if (command.params.size() < 1)
+        if (command.command == "NICK")
         {
-            throw std::invalid_argument("JOIN command requires a channel name");
+            client.setNickname(command.params[0]);
         }
-        const std::string& channelName = command.params[0];
-        if (channels.find(channelName) == channels.end())
+        else if (command.command == "USER")
         {
-            channels[channelName] = Channel(channelName);
+            client.setUsername(command.params[0]);
         }
-        channels[channelName].addMember(&client);
-    }
-    else if (command.command == "PRIVMSG")
-    {
-        std::string channelName = command.params[0];
-        std::string message = command.params[1];
-        if (channels.find(channelName) != channels.end())
+        else if (command.command == "JOIN")
         {
-            Channel& channel = channels[channelName];
-            const std::vector<Client*>& members = channel.getMembers();
-            for (std::vector<Client*>::const_iterator it = members.begin(); it != members.end(); ++it)
+            if (command.params.size() < 1)
             {
-                Client* member = *it;
-                std::cout << "Message to " << member->getNickname() << ": " << message << "\n";
+                throw std::invalid_argument("JOIN command requires a channel name");
+            }
+            const std::string &channelName = command.params[0];
+            if (channels.find(channelName) == channels.end())
+            {
+                channels[channelName] = Channel(channelName);
+            }
+            channels[channelName].addMember(&client);
+        }
+        else if (command.command == "PRIVMSG")
+        {
+            std::string channelName = command.params[0];
+            std::string message = command.params[1];
+            if (channels.find(channelName) != channels.end())
+            {
+                Channel &channel = channels[channelName];
+                const std::vector<Client *> &members = channel.getMembers();
+                for (std::vector<Client *>::const_iterator it = members.begin(); it != members.end(); ++it)
+                {
+                    Client *member = *it;
+                    std::cout << "Message to " << member->getNickname() << ": " << message << "\n";
+                }
             }
         }
     }
+    else
+    {
+        client.sendResponse("Please authenticate using PASS <password>\n");
+    }
 }
 
-int main()
+int main(int argc, char **argv)
 {
-    // Faux client.
-    Client client(42);
-    try
-    {
-        client.setNickname("JohnDoe");
-        client.setUsername("johndoe");
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Error: " << e.what() << "\n";
-        return 1;
-    }
-    client.authenticate();
+    if (argc != 3)
+	{
+		std::cerr << "Usage: " << argv[0] << " <port> <password>" << std::endl;
+		return 1;
+	}
 
-    // Simulation de commandes
-    std::vector<std::string> rawMessages;
-    rawMessages.push_back(":JohnDoe NICK JohnDoe");
-    rawMessages.push_back(":JohnDoe USER johndoe");
-    rawMessages.push_back(":JohnDoe JOIN #general");
-    rawMessages.push_back(":JohnDoe PRIVMSG #general :Hello everyone!");
+    int port;
+	// Convert the port number from string to integer
+	std::stringstream ss(argv[1]);
+	if (!(ss >> port))
+	{
+		std::cerr << "Error: Invalid port number." << std::endl;
+		return 1;
+	}
 
-    for (std::vector<std::string>::const_iterator it = rawMessages.begin(); it != rawMessages.end(); ++it)
-    {
-        const std::string& rawMessage = *it;
-        CommandParser::ParsedCommand parsed = CommandParser::parse(rawMessage);
-        handleCommand(parsed, client);
-    }
+	std::string server_password = argv[2];
 
-    // Vérification des résultats
-    std::cout << "Client Nickname: " << client.getNickname() << "\n";
-    std::cout << "Client Username: " << client.getUsername() << "\n";
-    std::cout << "Authenticated: " << (client.authenticated() ? "Yes" : "No") << "\n";
+	int server_fd;
+	// create bind listen on the server socket
+	setup_server(server_fd, port);
+
+    std::vector<pollfd> poll_fds;
+	// Add the server socket to the poll vector
+	pollfd server_poll_fd = {server_fd, POLLIN, 0};
+	poll_fds.push_back(server_poll_fd);
+
+    server(server_fd, poll_fds, server_password);
+    
 
     if (channels.find("#general") != channels.end())
     {

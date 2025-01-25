@@ -23,6 +23,7 @@ private:
     std::string nickname;       // Pseudo de l'utilisateur
     std::string username;       // Nom d'utilisateur
     bool isAuthenticated;       // Indique si le client est authentifié ou non
+    std::string buffer;        // Buffer de réception
 
 public:
     Client(int socket_fd);
@@ -32,7 +33,11 @@ public:
     const std::string& getUsername() const;
     void setUsername(const std::string& user);
     bool authenticated() const;
-    void authenticate();
+    void authenticate(const std::string& server_password, const std::string& password);
+    void appendToBuffer(const std::string& data); // 
+    bool hasCommand() const;
+    std::string popCommand();
+    void sendResponse(const std::string& response);
 };
 
 #endif
