@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:18 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/24 14:07:34 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/27 14:18:02 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ bool CommandParser::isValidCommand(const std::string& cmd)
     
     // List of valid commands
     static const std::string validCommands[] = {
-        "NICK", "USER", "JOIN", "PRIVMSG", "PART", "QUIT", "COMMAND" // Ajout de "COMMAND" pour les tests
+        "NICK", "USER", "JOIN", "PRIVMSG", "PART", "QUIT", "COMMAND", "OP", "DEOP", "ISOP"
     };
     
     for (size_t i = 0; i < sizeof(validCommands) / sizeof(validCommands[0]); ++i)
@@ -101,7 +101,8 @@ void CommandParser::parsePrefix(const std::string& raw, ParsedCommand::Prefix& p
         {
             prefix.username = raw.substr(nickEnd + 1);
         }
-    } else if (raw[nickEnd] == '@')
+    }
+    else if (raw[nickEnd] == '@')
     {
         // Extract hostname only
         prefix.hostname = raw.substr(nickEnd + 1);
@@ -123,7 +124,8 @@ CommandParser::ParsedCommand CommandParser::parse(const std::string& rawMessage)
     
     // Parse prefix
     size_t pos = 0;
-    if (message[0] == ':') {
+    if (message[0] == ':')
+    {
         size_t spacePos = message.find(' ');
         if (spacePos == std::string::npos)
             throw ParseError("Malformed prefix");
@@ -142,12 +144,14 @@ CommandParser::ParsedCommand CommandParser::parse(const std::string& rawMessage)
     // Parse parameters
     pos = spacePos;
     std::vector<std::string> tempParams;
-    while (pos != std::string::npos) {
+    while (pos != std::string::npos)
+    {
         pos = message.find_first_not_of(' ', pos);
         if (pos == std::string::npos) 
             break;
         
-        if (message[pos] == ':') {
+        if (message[pos] == ':')
+        {
             // Trailing parameter
             tempParams.push_back(message.substr(pos + 1));
             break;
@@ -157,7 +161,8 @@ CommandParser::ParsedCommand CommandParser::parse(const std::string& rawMessage)
         if (spacePos == std::string::npos)
             spacePos = message.length();
         std::string param = message.substr(pos, spacePos - pos);
-        if (!param.empty()) {
+        if (!param.empty())
+        {
             tempParams.push_back(param);
             if (tempParams.size() > MAX_PARAMS)
                 throw ParseError("Too many parameters");

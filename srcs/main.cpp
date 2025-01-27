@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:23 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/24 13:14:19 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/27 14:33:36 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void handleCommand(const CommandParser::ParsedCommand& command, Client& client)
         const std::string& channelName = command.params[0];
         if (channels.find(channelName) == channels.end())
         {
-            channels[channelName] = Channel(channelName);
+            channels[channelName] = Channel(channelName, &client);
         }
         channels[channelName].addMember(&client);
     }
