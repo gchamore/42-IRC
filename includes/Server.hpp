@@ -14,6 +14,8 @@
 #include <map>
 #include <cstdlib>
 #include "Client.hpp"
+#include "CommandParser.hpp"
+#include "Channel.hpp"
 
 void setup_server(int &server_fd, int port);
 void server(int server_fd, std::vector<pollfd> poll_fds, std::string server_password);

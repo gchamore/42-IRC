@@ -14,7 +14,8 @@
 #define CLIENT_HPP
 
 #include <string>
-#include <stdexcept> // Add this line
+#include <stdexcept>
+#include <iostream>
 
 class Client
 {
@@ -34,7 +35,7 @@ public:
     void setUsername(const std::string& user);
     bool authenticated() const;
     void authenticate(const std::string& server_password, const std::string& password);
-    void appendToBuffer(const std::string& data); // 
+    void appendToBuffer(const std::string& data);
     bool hasCommand() const;
     std::string popCommand();
     void sendResponse(const std::string& response);

@@ -64,6 +64,11 @@ bool Client::authenticated() const
 
 void Client::authenticate(const std::string &server_password, const std::string &password)
 {
+	if (password.empty())
+	{
+		throw std::invalid_argument("Password cannot be empty");
+	}
+	std::cout << "checking password" << std::endl;
 	if (server_password != password)
 	{
 		throw std::invalid_argument("Invalid password");
@@ -93,7 +98,8 @@ std::string Client::popCommand()
 
 void Client::sendResponse(const std::string &response)
 {
-	if (send(fd, response.c_str(), response.length(), 0) < 0)
+	std::string responseWithNewline = response + "\r\n";
+	if (send(fd, responseWithNewline.c_str(), responseWithNewline.length(), 0) < 0)
 	{
 		throw std::runtime_error("Could not send response");
 	}

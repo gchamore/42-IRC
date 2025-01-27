@@ -1,10 +1,7 @@
-#include "Server.hpp"
-#include "Client.hpp"
-#include "CommandParser.hpp"
-#include "Channel.hpp"
+#include "../includes/Server.hpp"
 
 const std::string AUTH_COMMAND = "PASS";
-void handleCommand(const CommandParser::ParsedCommand& command, Client& client, const std::string& server_password);
+void handleCommand(const CommandParser::ParsedCommand &command, Client &client, const std::string &server_password);
 
 void setup_server(int &server_fd, int port)
 {
@@ -60,7 +57,7 @@ void setup_server(int &server_fd, int port)
 
 void server(int server_fd, std::vector<pollfd> poll_fds, std::string server_password)
 {
-	std::map<int, Client> clients;
+	std::map<int, Client*> clients;
 
 	while (true)
 	{
@@ -90,7 +87,7 @@ void server(int server_fd, std::vector<pollfd> poll_fds, std::string server_pass
 				// Add the new client to the poll vector
 				pollfd client_poll_fd = {client_fd, POLLIN, 0};
 				poll_fds.push_back(client_poll_fd);
-				clients[client_fd] = Client(client_fd);
+				clients[client_fd] = new Client(client_fd);
 
 				// Send a welcome message with command documentation
 				std::string welcome_message =
@@ -133,19 +130,18 @@ void server(int server_fd, std::vector<pollfd> poll_fds, std::string server_pass
 				else
 				{
 					// Append the received data to the client buffer
-					clients[client_fd].appendToBuffer(std::string(buffer, bytes_read));
-					while (clients[client_fd].hasCommand())
+					clients[client_fd]->appendToBuffer(std::string(buffer, bytes_read));
+					while (clients[client_fd]->hasCommand())
 					{
-
 						try
 						{
-							std::string command = clients[client_fd].popCommand();
-							auto parsed_commands = CommandParser::parse(command);
+							std::string command = clients[client_fd]->popCommand();
+							std::vector<CommandParser::ParsedCommand> parsed_commands = CommandParser::parse(command);
 
 							// Process complete commands ending with '\n'
-							for (const auto &parsed_command : parsed_commands)
+							for (std::vector<CommandParser::ParsedCommand>::const_iterator it = parsed_commands.begin(); it != parsed_commands.end(); ++it)
 							{
-								handleCommand(parsed_command, clients[client_fd], server_password);
+								handleCommand(*it, *clients[client_fd], server_password);
 							}
 						}
 						catch (const std::exception &e)
@@ -154,7 +150,13 @@ void server(int server_fd, std::vector<pollfd> poll_fds, std::string server_pass
 						}
 					}
 				}
+			}
 		}
+	}
+	for (std::map<int, Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		close(it->first);
+		delete it->second;
 	}
 	// Close the server socket
 	close(server_fd);

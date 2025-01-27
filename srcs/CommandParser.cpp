@@ -13,6 +13,7 @@
 #include "../includes/CommandParser.hpp"
 #include <stdexcept>
 #include <sstream>
+#include <iostream>
 #include <algorithm>
 
 std::vector<CommandParser::ParsedCommand> CommandParser::parse(const std::string &rawMessage)
@@ -49,7 +50,7 @@ std::vector<CommandParser::ParsedCommand> CommandParser::parse(const std::string
 		}
 
 		// Vérification des commandes valides
-		const std::string validCommandsArray[] = {"NICK", "USER", "JOIN", "PRIVMSG", "COMMAND"};
+		const std::string validCommandsArray[] = {"NICK", "USER", "JOIN", "PRIVMSG", "COMMAND", "PASS"};
 		const std::vector<std::string> validCommands(validCommandsArray, validCommandsArray + sizeof(validCommandsArray) / sizeof(validCommandsArray[0]));
 		if (std::find(validCommands.begin(), validCommands.end(), command.command) == validCommands.end())
 		{
@@ -62,7 +63,7 @@ std::vector<CommandParser::ParsedCommand> CommandParser::parse(const std::string
 			if (token[0] == ':')
 			{
 				std::string trailing;
-				std::getline(iss, trailing);
+				std::getline(lineStream, trailing);
 				command.params.push_back(token.substr(1) + trailing);
 				break;
 			}
