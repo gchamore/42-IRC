@@ -141,6 +141,7 @@ void server(int server_fd, std::vector<pollfd> poll_fds, std::string server_pass
 							// Process complete commands ending with '\n'
 							for (std::vector<CommandParser::ParsedCommand>::const_iterator it = parsed_commands.begin(); it != parsed_commands.end(); ++it)
 							{
+								std::cout << "Command from client " << client_fd << ": " << it->command << std::endl;
 								handleCommand(*it, *clients[client_fd], server_password);
 							}
 						}

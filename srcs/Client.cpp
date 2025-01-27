@@ -54,7 +54,20 @@ void Client::setUsername(const std::string &user)
 	{
 		throw std::invalid_argument("Username cannot be empty");
 	}
+	if(nickname.empty())
+	{
+		this->sendResponse("451 ERR_NOTREGISTERED :You have not registered");
+		throw std::invalid_argument("Nickname must be set before username");
+	}
+	if (!username.empty())
+	{
+		this->sendResponse("462 ERR_ALREADYREGISTERED :You may not reregister");
+		throw std::invalid_argument("You may not reregister");
+	}
+	this->sendResponse("Welcome, " + nickname + " your username is : " + username + "!");
+	std::cout << "Client " << nickname << " has completed login with username: " << username << std::endl;
 	username = user;
+
 }
 
 bool Client::authenticated() const
