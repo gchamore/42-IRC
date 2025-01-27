@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:23 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/23 15:57:55 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/27 14:33:36 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void handleCommand(const CommandParser::ParsedCommand &command, Client &client, 
 			const std::string &channelName = command.params[0];
 			if (channels.find(channelName) == channels.end())
 			{
-				channels[channelName] = Channel(channelName);
+				channels[channelName] = Channel(channelName, &client);
 			}
 			channels[channelName].addMember(&client);
 		}
@@ -91,6 +91,26 @@ void handleCommand(const CommandParser::ParsedCommand &command, Client &client, 
 				}
 			}
 		}
+		else if (command.command == "PART")
+    {
+        if (command.params.size() < 1)
+        {
+            throw std::invalid_argument("PART command requires a channel name");
+        }
+        const std::string& channelName = command.params[0];
+        if (channels.find(channelName) != channels.end())
+        {
+            channels[channelName].removeMember(&client);
+        }
+    }
+    else if (command.command == "QUIT")
+    {
+        std::cout << client.getNickname() << " has quit the server.\n";
+        for (std::map<std::string, Channel>::iterator it = channels.begin(); it != channels.end(); ++it)
+        {
+            it->second.removeMember(&client);
+        }
+    }
 	}
 	else
 	{

@@ -92,3 +92,43 @@ TEST(ChannelTest, RemoveNullMember)
     Channel channel("#general");
     EXPECT_NO_THROW(channel.removeMember(nullptr));
 }
+
+TEST(ChannelTest, AddMemberAsOperator)
+{
+    Channel channel("#general");
+    Client client(1);
+    client.setNickname("TestNick");
+    channel.addMember(&client, true);
+    EXPECT_TRUE(channel.isOperator(&client));
+}
+
+TEST(ChannelTest, AddMemberAsNonOperator)
+{
+    Channel channel("#general");
+    Client client(1);
+    client.setNickname("TestNick");
+    channel.addMember(&client, false);
+    EXPECT_FALSE(channel.isOperator(&client));
+}
+
+TEST(ChannelTest, SetOperatorStatus)
+{
+    Channel channel("#general");
+    Client client(1);
+    client.setNickname("TestNick");
+    channel.addMember(&client, false);
+    EXPECT_FALSE(channel.isOperator(&client));
+    channel.setOperator(&client, true);
+    EXPECT_TRUE(channel.isOperator(&client));
+}
+
+TEST(ChannelTest, RemoveMemberOperatorStatus)
+{
+    Channel channel("#general");
+    Client client(1);
+    client.setNickname("TestNick");
+    channel.addMember(&client, true);
+    channel.removeMember(&client);
+    channel.addMember(&client, false);
+    EXPECT_FALSE(channel.isOperator(&client));
+}

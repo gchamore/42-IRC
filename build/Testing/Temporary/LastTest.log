@@ -1,10 +1,10 @@
-Start testing: Jan 23 16:18 CET
+Start testing: Jan 27 11:46 CET
 ----------------------------------------------------------
-1/32 Testing: ClientTest.NicknameTest
-1/32 Test: ClientTest.NicknameTest
+1/39 Testing: ClientTest.NicknameTest
+1/39 Test: ClientTest.NicknameTest
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_client" "--gtest_filter=ClientTest.NicknameTest" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ClientTest.NicknameTest" start time: Jan 23 16:18 CET
+"ClientTest.NicknameTest" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -17,21 +17,21 @@ Note: Google Test filter = ClientTest.NicknameTest
 [----------] 1 test from ClientTest (0 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (1 ms total)
+[==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"ClientTest.NicknameTest" end time: Jan 23 16:18 CET
+"ClientTest.NicknameTest" end time: Jan 27 11:46 CET
 "ClientTest.NicknameTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-2/32 Testing: ClientTest.UsernameTest
-2/32 Test: ClientTest.UsernameTest
+2/39 Testing: ClientTest.UsernameTest
+2/39 Test: ClientTest.UsernameTest
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_client" "--gtest_filter=ClientTest.UsernameTest" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ClientTest.UsernameTest" start time: Jan 23 16:18 CET
+"ClientTest.UsernameTest" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -50,15 +50,15 @@ Note: Google Test filter = ClientTest.UsernameTest
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ClientTest.UsernameTest" end time: Jan 23 16:18 CET
+"ClientTest.UsernameTest" end time: Jan 27 11:46 CET
 "ClientTest.UsernameTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-3/32 Testing: ClientTest.AuthenticationTest
-3/32 Test: ClientTest.AuthenticationTest
+3/39 Testing: ClientTest.AuthenticationTest
+3/39 Test: ClientTest.AuthenticationTest
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_client" "--gtest_filter=ClientTest.AuthenticationTest" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ClientTest.AuthenticationTest" start time: Jan 23 16:18 CET
+"ClientTest.AuthenticationTest" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -77,15 +77,15 @@ Note: Google Test filter = ClientTest.AuthenticationTest
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ClientTest.AuthenticationTest" end time: Jan 23 16:18 CET
+"ClientTest.AuthenticationTest" end time: Jan 27 11:46 CET
 "ClientTest.AuthenticationTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-4/32 Testing: ClientTest.InvalidNicknameTest
-4/32 Test: ClientTest.InvalidNicknameTest
+4/39 Testing: ClientTest.InvalidNicknameTest
+4/39 Test: ClientTest.InvalidNicknameTest
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_client" "--gtest_filter=ClientTest.InvalidNicknameTest" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ClientTest.InvalidNicknameTest" start time: Jan 23 16:18 CET
+"ClientTest.InvalidNicknameTest" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -94,25 +94,25 @@ Note: Google Test filter = ClientTest.InvalidNicknameTest
 [----------] Global test environment set-up.
 [----------] 1 test from ClientTest
 [ RUN      ] ClientTest.InvalidNicknameTest
-[       OK ] ClientTest.InvalidNicknameTest (0 ms)
-[----------] 1 test from ClientTest (0 ms total)
+[       OK ] ClientTest.InvalidNicknameTest (2 ms)
+[----------] 1 test from ClientTest (2 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (0 ms total)
+[==========] 1 test from 1 test suite ran. (2 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"ClientTest.InvalidNicknameTest" end time: Jan 23 16:18 CET
+"ClientTest.InvalidNicknameTest" end time: Jan 27 11:46 CET
 "ClientTest.InvalidNicknameTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-5/32 Testing: ClientTest.InvalidUsernameTest
-5/32 Test: ClientTest.InvalidUsernameTest
+5/39 Testing: ClientTest.InvalidUsernameTest
+5/39 Test: ClientTest.InvalidUsernameTest
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_client" "--gtest_filter=ClientTest.InvalidUsernameTest" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ClientTest.InvalidUsernameTest" start time: Jan 23 16:18 CET
+"ClientTest.InvalidUsernameTest" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -131,15 +131,15 @@ Note: Google Test filter = ClientTest.InvalidUsernameTest
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ClientTest.InvalidUsernameTest" end time: Jan 23 16:18 CET
+"ClientTest.InvalidUsernameTest" end time: Jan 27 11:46 CET
 "ClientTest.InvalidUsernameTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-6/32 Testing: ClientTest.SetNicknameTwice
-6/32 Test: ClientTest.SetNicknameTwice
+6/39 Testing: ClientTest.SetNicknameTwice
+6/39 Test: ClientTest.SetNicknameTwice
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_client" "--gtest_filter=ClientTest.SetNicknameTwice" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ClientTest.SetNicknameTwice" start time: Jan 23 16:18 CET
+"ClientTest.SetNicknameTwice" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -158,15 +158,15 @@ Note: Google Test filter = ClientTest.SetNicknameTwice
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ClientTest.SetNicknameTwice" end time: Jan 23 16:18 CET
+"ClientTest.SetNicknameTwice" end time: Jan 27 11:46 CET
 "ClientTest.SetNicknameTwice" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-7/32 Testing: ClientTest.SetUsernameTwice
-7/32 Test: ClientTest.SetUsernameTwice
+7/39 Testing: ClientTest.SetUsernameTwice
+7/39 Test: ClientTest.SetUsernameTwice
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_client" "--gtest_filter=ClientTest.SetUsernameTwice" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ClientTest.SetUsernameTwice" start time: Jan 23 16:18 CET
+"ClientTest.SetUsernameTwice" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -179,21 +179,21 @@ Note: Google Test filter = ClientTest.SetUsernameTwice
 [----------] 1 test from ClientTest (0 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (0 ms total)
+[==========] 1 test from 1 test suite ran. (1 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ClientTest.SetUsernameTwice" end time: Jan 23 16:18 CET
+"ClientTest.SetUsernameTwice" end time: Jan 27 11:46 CET
 "ClientTest.SetUsernameTwice" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-8/32 Testing: ClientTest.GetFDTest
-8/32 Test: ClientTest.GetFDTest
+8/39 Testing: ClientTest.GetFDTest
+8/39 Test: ClientTest.GetFDTest
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_client" "--gtest_filter=ClientTest.GetFDTest" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ClientTest.GetFDTest" start time: Jan 23 16:18 CET
+"ClientTest.GetFDTest" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -212,15 +212,15 @@ Note: Google Test filter = ClientTest.GetFDTest
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ClientTest.GetFDTest" end time: Jan 23 16:18 CET
+"ClientTest.GetFDTest" end time: Jan 27 11:46 CET
 "ClientTest.GetFDTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-9/32 Testing: ClientTest.AuthenticateTwice
-9/32 Test: ClientTest.AuthenticateTwice
+9/39 Testing: ClientTest.AuthenticateTwice
+9/39 Test: ClientTest.AuthenticateTwice
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_client" "--gtest_filter=ClientTest.AuthenticateTwice" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ClientTest.AuthenticateTwice" start time: Jan 23 16:18 CET
+"ClientTest.AuthenticateTwice" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -233,21 +233,21 @@ Note: Google Test filter = ClientTest.AuthenticateTwice
 [----------] 1 test from ClientTest (0 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (3 ms total)
+[==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.01 sec
+Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ClientTest.AuthenticateTwice" end time: Jan 23 16:18 CET
+"ClientTest.AuthenticateTwice" end time: Jan 27 11:46 CET
 "ClientTest.AuthenticateTwice" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-10/32 Testing: ClientTest.NicknameNotSet
-10/32 Test: ClientTest.NicknameNotSet
+10/39 Testing: ClientTest.NicknameNotSet
+10/39 Test: ClientTest.NicknameNotSet
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_client" "--gtest_filter=ClientTest.NicknameNotSet" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ClientTest.NicknameNotSet" start time: Jan 23 16:18 CET
+"ClientTest.NicknameNotSet" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -263,18 +263,18 @@ Note: Google Test filter = ClientTest.NicknameNotSet
 [==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.01 sec
+Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ClientTest.NicknameNotSet" end time: Jan 23 16:18 CET
+"ClientTest.NicknameNotSet" end time: Jan 27 11:46 CET
 "ClientTest.NicknameNotSet" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-11/32 Testing: ClientTest.UsernameNotSet
-11/32 Test: ClientTest.UsernameNotSet
+11/39 Testing: ClientTest.UsernameNotSet
+11/39 Test: ClientTest.UsernameNotSet
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_client" "--gtest_filter=ClientTest.UsernameNotSet" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ClientTest.UsernameNotSet" start time: Jan 23 16:18 CET
+"ClientTest.UsernameNotSet" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -293,15 +293,15 @@ Note: Google Test filter = ClientTest.UsernameNotSet
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ClientTest.UsernameNotSet" end time: Jan 23 16:18 CET
+"ClientTest.UsernameNotSet" end time: Jan 27 11:46 CET
 "ClientTest.UsernameNotSet" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-12/32 Testing: ClientTest.NegativeSocketFD
-12/32 Test: ClientTest.NegativeSocketFD
+12/39 Testing: ClientTest.NegativeSocketFD
+12/39 Test: ClientTest.NegativeSocketFD
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_client" "--gtest_filter=ClientTest.NegativeSocketFD" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ClientTest.NegativeSocketFD" start time: Jan 23 16:18 CET
+"ClientTest.NegativeSocketFD" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -314,21 +314,21 @@ Note: Google Test filter = ClientTest.NegativeSocketFD
 [----------] 1 test from ClientTest (0 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (1 ms total)
+[==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ClientTest.NegativeSocketFD" end time: Jan 23 16:18 CET
+"ClientTest.NegativeSocketFD" end time: Jan 27 11:46 CET
 "ClientTest.NegativeSocketFD" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-13/32 Testing: CommandParserTest.ParseNickCommand
-13/32 Test: CommandParserTest.ParseNickCommand
+13/39 Testing: CommandParserTest.ParseNickCommand
+13/39 Test: CommandParserTest.ParseNickCommand
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseNickCommand" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"CommandParserTest.ParseNickCommand" start time: Jan 23 16:18 CET
+"CommandParserTest.ParseNickCommand" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -347,15 +347,15 @@ Note: Google Test filter = CommandParserTest.ParseNickCommand
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"CommandParserTest.ParseNickCommand" end time: Jan 23 16:18 CET
+"CommandParserTest.ParseNickCommand" end time: Jan 27 11:46 CET
 "CommandParserTest.ParseNickCommand" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-14/32 Testing: CommandParserTest.ParseUserCommand
-14/32 Test: CommandParserTest.ParseUserCommand
+14/39 Testing: CommandParserTest.ParseUserCommand
+14/39 Test: CommandParserTest.ParseUserCommand
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseUserCommand" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"CommandParserTest.ParseUserCommand" start time: Jan 23 16:18 CET
+"CommandParserTest.ParseUserCommand" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -374,15 +374,15 @@ Note: Google Test filter = CommandParserTest.ParseUserCommand
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"CommandParserTest.ParseUserCommand" end time: Jan 23 16:18 CET
+"CommandParserTest.ParseUserCommand" end time: Jan 27 11:46 CET
 "CommandParserTest.ParseUserCommand" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-15/32 Testing: CommandParserTest.ParseJoinCommand
-15/32 Test: CommandParserTest.ParseJoinCommand
+15/39 Testing: CommandParserTest.ParseJoinCommand
+15/39 Test: CommandParserTest.ParseJoinCommand
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseJoinCommand" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"CommandParserTest.ParseJoinCommand" start time: Jan 23 16:18 CET
+"CommandParserTest.ParseJoinCommand" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -401,15 +401,15 @@ Note: Google Test filter = CommandParserTest.ParseJoinCommand
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"CommandParserTest.ParseJoinCommand" end time: Jan 23 16:18 CET
+"CommandParserTest.ParseJoinCommand" end time: Jan 27 11:46 CET
 "CommandParserTest.ParseJoinCommand" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-16/32 Testing: CommandParserTest.ParsePrivmsgCommand
-16/32 Test: CommandParserTest.ParsePrivmsgCommand
+16/39 Testing: CommandParserTest.ParsePrivmsgCommand
+16/39 Test: CommandParserTest.ParsePrivmsgCommand
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParsePrivmsgCommand" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"CommandParserTest.ParsePrivmsgCommand" start time: Jan 23 16:18 CET
+"CommandParserTest.ParsePrivmsgCommand" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -428,15 +428,15 @@ Note: Google Test filter = CommandParserTest.ParsePrivmsgCommand
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"CommandParserTest.ParsePrivmsgCommand" end time: Jan 23 16:18 CET
+"CommandParserTest.ParsePrivmsgCommand" end time: Jan 27 11:46 CET
 "CommandParserTest.ParsePrivmsgCommand" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-17/32 Testing: CommandParserTest.ParseInvalidCommand
-17/32 Test: CommandParserTest.ParseInvalidCommand
+17/39 Testing: CommandParserTest.ParseInvalidCommand
+17/39 Test: CommandParserTest.ParseInvalidCommand
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseInvalidCommand" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"CommandParserTest.ParseInvalidCommand" start time: Jan 23 16:18 CET
+"CommandParserTest.ParseInvalidCommand" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -445,25 +445,25 @@ Note: Google Test filter = CommandParserTest.ParseInvalidCommand
 [----------] Global test environment set-up.
 [----------] 1 test from CommandParserTest
 [ RUN      ] CommandParserTest.ParseInvalidCommand
-[       OK ] CommandParserTest.ParseInvalidCommand (0 ms)
-[----------] 1 test from CommandParserTest (0 ms total)
+[       OK ] CommandParserTest.ParseInvalidCommand (1 ms)
+[----------] 1 test from CommandParserTest (1 ms total)
 
 [----------] Global test environment tear-down
 [==========] 1 test from 1 test suite ran. (1 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"CommandParserTest.ParseInvalidCommand" end time: Jan 23 16:18 CET
+"CommandParserTest.ParseInvalidCommand" end time: Jan 27 11:46 CET
 "CommandParserTest.ParseInvalidCommand" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-18/32 Testing: CommandParserTest.ParseEmptyMessage
-18/32 Test: CommandParserTest.ParseEmptyMessage
+18/39 Testing: CommandParserTest.ParseEmptyMessage
+18/39 Test: CommandParserTest.ParseEmptyMessage
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseEmptyMessage" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"CommandParserTest.ParseEmptyMessage" start time: Jan 23 16:18 CET
+"CommandParserTest.ParseEmptyMessage" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -482,15 +482,15 @@ Note: Google Test filter = CommandParserTest.ParseEmptyMessage
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"CommandParserTest.ParseEmptyMessage" end time: Jan 23 16:18 CET
+"CommandParserTest.ParseEmptyMessage" end time: Jan 27 11:46 CET
 "CommandParserTest.ParseEmptyMessage" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-19/32 Testing: CommandParserTest.ParseNoPrefix
-19/32 Test: CommandParserTest.ParseNoPrefix
+19/39 Testing: CommandParserTest.ParseNoPrefix
+19/39 Test: CommandParserTest.ParseNoPrefix
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseNoPrefix" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"CommandParserTest.ParseNoPrefix" start time: Jan 23 16:18 CET
+"CommandParserTest.ParseNoPrefix" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -509,15 +509,15 @@ Note: Google Test filter = CommandParserTest.ParseNoPrefix
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"CommandParserTest.ParseNoPrefix" end time: Jan 23 16:18 CET
+"CommandParserTest.ParseNoPrefix" end time: Jan 27 11:46 CET
 "CommandParserTest.ParseNoPrefix" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-20/32 Testing: CommandParserTest.ParseCommandWithMultipleParams
-20/32 Test: CommandParserTest.ParseCommandWithMultipleParams
+20/39 Testing: CommandParserTest.ParseCommandWithMultipleParams
+20/39 Test: CommandParserTest.ParseCommandWithMultipleParams
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseCommandWithMultipleParams" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"CommandParserTest.ParseCommandWithMultipleParams" start time: Jan 23 16:18 CET
+"CommandParserTest.ParseCommandWithMultipleParams" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -536,15 +536,15 @@ Note: Google Test filter = CommandParserTest.ParseCommandWithMultipleParams
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"CommandParserTest.ParseCommandWithMultipleParams" end time: Jan 23 16:18 CET
+"CommandParserTest.ParseCommandWithMultipleParams" end time: Jan 27 11:46 CET
 "CommandParserTest.ParseCommandWithMultipleParams" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-21/32 Testing: CommandParserTest.ParseCommandWithTrailingParam
-21/32 Test: CommandParserTest.ParseCommandWithTrailingParam
+21/39 Testing: CommandParserTest.ParseCommandWithTrailingParam
+21/39 Test: CommandParserTest.ParseCommandWithTrailingParam
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseCommandWithTrailingParam" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"CommandParserTest.ParseCommandWithTrailingParam" start time: Jan 23 16:18 CET
+"CommandParserTest.ParseCommandWithTrailingParam" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -560,18 +560,18 @@ Note: Google Test filter = CommandParserTest.ParseCommandWithTrailingParam
 [==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"CommandParserTest.ParseCommandWithTrailingParam" end time: Jan 23 16:18 CET
+"CommandParserTest.ParseCommandWithTrailingParam" end time: Jan 27 11:46 CET
 "CommandParserTest.ParseCommandWithTrailingParam" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-22/32 Testing: CommandParserTest.ParseCommandWithEmptyParams
-22/32 Test: CommandParserTest.ParseCommandWithEmptyParams
+22/39 Testing: CommandParserTest.ParseCommandWithEmptyParams
+22/39 Test: CommandParserTest.ParseCommandWithEmptyParams
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseCommandWithEmptyParams" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"CommandParserTest.ParseCommandWithEmptyParams" start time: Jan 23 16:18 CET
+"CommandParserTest.ParseCommandWithEmptyParams" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -584,21 +584,21 @@ Note: Google Test filter = CommandParserTest.ParseCommandWithEmptyParams
 [----------] 1 test from CommandParserTest (0 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (1 ms total)
+[==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"CommandParserTest.ParseCommandWithEmptyParams" end time: Jan 23 16:18 CET
+"CommandParserTest.ParseCommandWithEmptyParams" end time: Jan 27 11:46 CET
 "CommandParserTest.ParseCommandWithEmptyParams" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-23/32 Testing: CommandParserTest.ParseCommandWithOnlyTrailingParam
-23/32 Test: CommandParserTest.ParseCommandWithOnlyTrailingParam
+23/39 Testing: CommandParserTest.ParseCommandWithOnlyTrailingParam
+23/39 Test: CommandParserTest.ParseCommandWithOnlyTrailingParam
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseCommandWithOnlyTrailingParam" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"CommandParserTest.ParseCommandWithOnlyTrailingParam" start time: Jan 23 16:18 CET
+"CommandParserTest.ParseCommandWithOnlyTrailingParam" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -617,15 +617,204 @@ Note: Google Test filter = CommandParserTest.ParseCommandWithOnlyTrailingParam
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"CommandParserTest.ParseCommandWithOnlyTrailingParam" end time: Jan 23 16:18 CET
+"CommandParserTest.ParseCommandWithOnlyTrailingParam" end time: Jan 27 11:46 CET
 "CommandParserTest.ParseCommandWithOnlyTrailingParam" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-24/32 Testing: ChannelTest.AddMemberTest
-24/32 Test: ChannelTest.AddMemberTest
+24/39 Testing: CommandParserTest.ParseCommandWithMaxParams
+24/39 Test: CommandParserTest.ParseCommandWithMaxParams
+Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseCommandWithMaxParams" "--gtest_also_run_disabled_tests"
+Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
+"CommandParserTest.ParseCommandWithMaxParams" start time: Jan 27 11:46 CET
+Output:
+----------------------------------------------------------
+Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = CommandParserTest.ParseCommandWithMaxParams
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CommandParserTest
+[ RUN      ] CommandParserTest.ParseCommandWithMaxParams
+[       OK ] CommandParserTest.ParseCommandWithMaxParams (0 ms)
+[----------] 1 test from CommandParserTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"CommandParserTest.ParseCommandWithMaxParams" end time: Jan 27 11:46 CET
+"CommandParserTest.ParseCommandWithMaxParams" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/39 Testing: CommandParserTest.ParseCommandWithTooManyParams
+25/39 Test: CommandParserTest.ParseCommandWithTooManyParams
+Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseCommandWithTooManyParams" "--gtest_also_run_disabled_tests"
+Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
+"CommandParserTest.ParseCommandWithTooManyParams" start time: Jan 27 11:46 CET
+Output:
+----------------------------------------------------------
+Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = CommandParserTest.ParseCommandWithTooManyParams
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CommandParserTest
+[ RUN      ] CommandParserTest.ParseCommandWithTooManyParams
+[       OK ] CommandParserTest.ParseCommandWithTooManyParams (0 ms)
+[----------] 1 test from CommandParserTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"CommandParserTest.ParseCommandWithTooManyParams" end time: Jan 27 11:46 CET
+"CommandParserTest.ParseCommandWithTooManyParams" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/39 Testing: CommandParserTest.ParseCommandWithMaxPrefixLength
+26/39 Test: CommandParserTest.ParseCommandWithMaxPrefixLength
+Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseCommandWithMaxPrefixLength" "--gtest_also_run_disabled_tests"
+Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
+"CommandParserTest.ParseCommandWithMaxPrefixLength" start time: Jan 27 11:46 CET
+Output:
+----------------------------------------------------------
+Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = CommandParserTest.ParseCommandWithMaxPrefixLength
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CommandParserTest
+[ RUN      ] CommandParserTest.ParseCommandWithMaxPrefixLength
+[       OK ] CommandParserTest.ParseCommandWithMaxPrefixLength (0 ms)
+[----------] 1 test from CommandParserTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"CommandParserTest.ParseCommandWithMaxPrefixLength" end time: Jan 27 11:46 CET
+"CommandParserTest.ParseCommandWithMaxPrefixLength" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/39 Testing: CommandParserTest.ParseCommandWithTooLongPrefix
+27/39 Test: CommandParserTest.ParseCommandWithTooLongPrefix
+Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseCommandWithTooLongPrefix" "--gtest_also_run_disabled_tests"
+Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
+"CommandParserTest.ParseCommandWithTooLongPrefix" start time: Jan 27 11:46 CET
+Output:
+----------------------------------------------------------
+Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = CommandParserTest.ParseCommandWithTooLongPrefix
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CommandParserTest
+[ RUN      ] CommandParserTest.ParseCommandWithTooLongPrefix
+[       OK ] CommandParserTest.ParseCommandWithTooLongPrefix (0 ms)
+[----------] 1 test from CommandParserTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"CommandParserTest.ParseCommandWithTooLongPrefix" end time: Jan 27 11:46 CET
+"CommandParserTest.ParseCommandWithTooLongPrefix" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/39 Testing: CommandParserTest.ParseCommandWithMaxCommandLength
+28/39 Test: CommandParserTest.ParseCommandWithMaxCommandLength
+Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseCommandWithMaxCommandLength" "--gtest_also_run_disabled_tests"
+Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
+"CommandParserTest.ParseCommandWithMaxCommandLength" start time: Jan 27 11:46 CET
+Output:
+----------------------------------------------------------
+Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = CommandParserTest.ParseCommandWithMaxCommandLength
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CommandParserTest
+[ RUN      ] CommandParserTest.ParseCommandWithMaxCommandLength
+[       OK ] CommandParserTest.ParseCommandWithMaxCommandLength (0 ms)
+[----------] 1 test from CommandParserTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"CommandParserTest.ParseCommandWithMaxCommandLength" end time: Jan 27 11:46 CET
+"CommandParserTest.ParseCommandWithMaxCommandLength" time elapsed: 00:00:00
+----------------------------------------------------------
+
+29/39 Testing: CommandParserTest.ParseCommandWithTooLongCommand
+29/39 Test: CommandParserTest.ParseCommandWithTooLongCommand
+Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseCommandWithTooLongCommand" "--gtest_also_run_disabled_tests"
+Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
+"CommandParserTest.ParseCommandWithTooLongCommand" start time: Jan 27 11:46 CET
+Output:
+----------------------------------------------------------
+Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = CommandParserTest.ParseCommandWithTooLongCommand
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CommandParserTest
+[ RUN      ] CommandParserTest.ParseCommandWithTooLongCommand
+[       OK ] CommandParserTest.ParseCommandWithTooLongCommand (0 ms)
+[----------] 1 test from CommandParserTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"CommandParserTest.ParseCommandWithTooLongCommand" end time: Jan 27 11:46 CET
+"CommandParserTest.ParseCommandWithTooLongCommand" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/39 Testing: CommandParserTest.ParseCommandWithoutCRLF
+30/39 Test: CommandParserTest.ParseCommandWithoutCRLF
+Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser" "--gtest_filter=CommandParserTest.ParseCommandWithoutCRLF" "--gtest_also_run_disabled_tests"
+Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
+"CommandParserTest.ParseCommandWithoutCRLF" start time: Jan 27 11:46 CET
+Output:
+----------------------------------------------------------
+Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
+Note: Google Test filter = CommandParserTest.ParseCommandWithoutCRLF
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CommandParserTest
+[ RUN      ] CommandParserTest.ParseCommandWithoutCRLF
+[       OK ] CommandParserTest.ParseCommandWithoutCRLF (0 ms)
+[----------] 1 test from CommandParserTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"CommandParserTest.ParseCommandWithoutCRLF" end time: Jan 27 11:46 CET
+"CommandParserTest.ParseCommandWithoutCRLF" time elapsed: 00:00:00
+----------------------------------------------------------
+
+31/39 Testing: ChannelTest.AddMemberTest
+31/39 Test: ChannelTest.AddMemberTest
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_channel" "--gtest_filter=ChannelTest.AddMemberTest" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ChannelTest.AddMemberTest" start time: Jan 23 16:18 CET
+"ChannelTest.AddMemberTest" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -644,15 +833,15 @@ Note: Google Test filter = ChannelTest.AddMemberTest
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ChannelTest.AddMemberTest" end time: Jan 23 16:18 CET
+"ChannelTest.AddMemberTest" end time: Jan 27 11:46 CET
 "ChannelTest.AddMemberTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-25/32 Testing: ChannelTest.RemoveMemberTest
-25/32 Test: ChannelTest.RemoveMemberTest
+32/39 Testing: ChannelTest.RemoveMemberTest
+32/39 Test: ChannelTest.RemoveMemberTest
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_channel" "--gtest_filter=ChannelTest.RemoveMemberTest" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ChannelTest.RemoveMemberTest" start time: Jan 23 16:18 CET
+"ChannelTest.RemoveMemberTest" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -671,15 +860,15 @@ Note: Google Test filter = ChannelTest.RemoveMemberTest
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ChannelTest.RemoveMemberTest" end time: Jan 23 16:18 CET
+"ChannelTest.RemoveMemberTest" end time: Jan 27 11:46 CET
 "ChannelTest.RemoveMemberTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-26/32 Testing: ChannelTest.MultipleMembersTest
-26/32 Test: ChannelTest.MultipleMembersTest
+33/39 Testing: ChannelTest.MultipleMembersTest
+33/39 Test: ChannelTest.MultipleMembersTest
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_channel" "--gtest_filter=ChannelTest.MultipleMembersTest" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ChannelTest.MultipleMembersTest" start time: Jan 23 16:18 CET
+"ChannelTest.MultipleMembersTest" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -692,21 +881,21 @@ Note: Google Test filter = ChannelTest.MultipleMembersTest
 [----------] 1 test from ChannelTest (0 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (1 ms total)
+[==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ChannelTest.MultipleMembersTest" end time: Jan 23 16:18 CET
+"ChannelTest.MultipleMembersTest" end time: Jan 27 11:46 CET
 "ChannelTest.MultipleMembersTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-27/32 Testing: ChannelTest.AddSameMemberTwice
-27/32 Test: ChannelTest.AddSameMemberTwice
+34/39 Testing: ChannelTest.AddSameMemberTwice
+34/39 Test: ChannelTest.AddSameMemberTwice
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_channel" "--gtest_filter=ChannelTest.AddSameMemberTwice" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ChannelTest.AddSameMemberTwice" start time: Jan 23 16:18 CET
+"ChannelTest.AddSameMemberTwice" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -722,18 +911,18 @@ Note: Google Test filter = ChannelTest.AddSameMemberTwice
 [==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.01 sec
+Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ChannelTest.AddSameMemberTwice" end time: Jan 23 16:18 CET
+"ChannelTest.AddSameMemberTwice" end time: Jan 27 11:46 CET
 "ChannelTest.AddSameMemberTwice" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-28/32 Testing: ChannelTest.RemoveNonExistentMember
-28/32 Test: ChannelTest.RemoveNonExistentMember
+35/39 Testing: ChannelTest.RemoveNonExistentMember
+35/39 Test: ChannelTest.RemoveNonExistentMember
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_channel" "--gtest_filter=ChannelTest.RemoveNonExistentMember" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ChannelTest.RemoveNonExistentMember" start time: Jan 23 16:18 CET
+"ChannelTest.RemoveNonExistentMember" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -749,18 +938,18 @@ Note: Google Test filter = ChannelTest.RemoveNonExistentMember
 [==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"ChannelTest.RemoveNonExistentMember" end time: Jan 23 16:18 CET
+"ChannelTest.RemoveNonExistentMember" end time: Jan 27 11:46 CET
 "ChannelTest.RemoveNonExistentMember" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-29/32 Testing: ChannelTest.AddAndRemoveMultipleMembers
-29/32 Test: ChannelTest.AddAndRemoveMultipleMembers
+36/39 Testing: ChannelTest.AddAndRemoveMultipleMembers
+36/39 Test: ChannelTest.AddAndRemoveMultipleMembers
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_channel" "--gtest_filter=ChannelTest.AddAndRemoveMultipleMembers" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ChannelTest.AddAndRemoveMultipleMembers" start time: Jan 23 16:18 CET
+"ChannelTest.AddAndRemoveMultipleMembers" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -779,15 +968,15 @@ Note: Google Test filter = ChannelTest.AddAndRemoveMultipleMembers
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ChannelTest.AddAndRemoveMultipleMembers" end time: Jan 23 16:18 CET
+"ChannelTest.AddAndRemoveMultipleMembers" end time: Jan 27 11:46 CET
 "ChannelTest.AddAndRemoveMultipleMembers" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-30/32 Testing: ChannelTest.ChannelNameTest
-30/32 Test: ChannelTest.ChannelNameTest
+37/39 Testing: ChannelTest.ChannelNameTest
+37/39 Test: ChannelTest.ChannelNameTest
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_channel" "--gtest_filter=ChannelTest.ChannelNameTest" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ChannelTest.ChannelNameTest" start time: Jan 23 16:18 CET
+"ChannelTest.ChannelNameTest" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -796,25 +985,25 @@ Note: Google Test filter = ChannelTest.ChannelNameTest
 [----------] Global test environment set-up.
 [----------] 1 test from ChannelTest
 [ RUN      ] ChannelTest.ChannelNameTest
-[       OK ] ChannelTest.ChannelNameTest (1 ms)
-[----------] 1 test from ChannelTest (1 ms total)
+[       OK ] ChannelTest.ChannelNameTest (0 ms)
+[----------] 1 test from ChannelTest (0 ms total)
 
 [----------] Global test environment tear-down
-[==========] 1 test from 1 test suite ran. (1 ms total)
+[==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ChannelTest.ChannelNameTest" end time: Jan 23 16:18 CET
+"ChannelTest.ChannelNameTest" end time: Jan 27 11:46 CET
 "ChannelTest.ChannelNameTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-31/32 Testing: ChannelTest.AddNullMember
-31/32 Test: ChannelTest.AddNullMember
+38/39 Testing: ChannelTest.AddNullMember
+38/39 Test: ChannelTest.AddNullMember
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_channel" "--gtest_filter=ChannelTest.AddNullMember" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ChannelTest.AddNullMember" start time: Jan 23 16:18 CET
+"ChannelTest.AddNullMember" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -833,15 +1022,15 @@ Note: Google Test filter = ChannelTest.AddNullMember
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ChannelTest.AddNullMember" end time: Jan 23 16:18 CET
+"ChannelTest.AddNullMember" end time: Jan 27 11:46 CET
 "ChannelTest.AddNullMember" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-32/32 Testing: ChannelTest.RemoveNullMember
-32/32 Test: ChannelTest.RemoveNullMember
+39/39 Testing: ChannelTest.RemoveNullMember
+39/39 Test: ChannelTest.RemoveNullMember
 Command: "/home/gchamore/42Paris/projects_on_duty/irc/build/test_channel" "--gtest_filter=ChannelTest.RemoveNullMember" "--gtest_also_run_disabled_tests"
 Directory: /home/gchamore/42Paris/projects_on_duty/irc/build
-"ChannelTest.RemoveNullMember" start time: Jan 23 16:18 CET
+"ChannelTest.RemoveNullMember" start time: Jan 27 11:46 CET
 Output:
 ----------------------------------------------------------
 Running main() from /home/gchamore/42Paris/projects_on_duty/irc/build/_deps/googletest-src/googletest/src/gtest_main.cc
@@ -860,8 +1049,8 @@ Note: Google Test filter = ChannelTest.RemoveNullMember
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ChannelTest.RemoveNullMember" end time: Jan 23 16:18 CET
+"ChannelTest.RemoveNullMember" end time: Jan 27 11:46 CET
 "ChannelTest.RemoveNullMember" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Jan 23 16:18 CET
+End testing: Jan 27 11:46 CET
