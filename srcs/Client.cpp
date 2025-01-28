@@ -14,9 +14,10 @@
 #include <stdexcept>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <vector>
 #include <unistd.h>
 
-Client::Client(int socket_fd) : fd(socket_fd), isAuthenticated(false)
+Client::Client(int socket_fd) : fd(socket_fd), isAuthenticated(false), state(REGISTERING)
 {
 	if (socket_fd < 0)
 	{
@@ -54,20 +55,17 @@ void Client::setUsername(const std::string &user)
 	{
 		throw std::invalid_argument("Username cannot be empty");
 	}
-	if(nickname.empty())
-	{
-		this->sendResponse("451 ERR_NOTREGISTERED :You have not registered");
-		throw std::invalid_argument("Nickname must be set before username");
-	}
-	if (!username.empty())
-	{
-		this->sendResponse("462 ERR_ALREADYREGISTERED :You may not reregister");
-		throw std::invalid_argument("You may not reregister");
-	}
-	this->sendResponse("Welcome, " + nickname + " your username is : " + username + "!");
-	std::cout << "Client " << nickname << " has completed login with username: " << username << std::endl;
 	username = user;
+}
 
+Client::ClientState Client::getState() const
+{
+	return state;
+}
+
+void Client::setState(ClientState newState)
+{
+	state = newState;
 }
 
 bool Client::authenticated() const
@@ -75,17 +73,8 @@ bool Client::authenticated() const
 	return isAuthenticated;
 }
 
-void Client::authenticate(const std::string &server_password, const std::string &password)
+void Client::authenticate()
 {
-	if (password.empty())
-	{
-		throw std::invalid_argument("Password cannot be empty");
-	}
-	std::cout << "checking password" << std::endl;
-	if (server_password != password)
-	{
-		throw std::invalid_argument("Invalid password");
-	}
 	isAuthenticated = true;
 }
 
@@ -116,4 +105,9 @@ void Client::sendResponse(const std::string &response)
 	{
 		throw std::runtime_error("Could not send response");
 	}
+}
+
+std::vector<Channel *> Client::getChannels(const Server &server) const
+{
+	return server.getChannelsForClient(this);
 }

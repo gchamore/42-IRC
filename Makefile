@@ -23,6 +23,7 @@ SRCS = srcs/main.cpp \
        srcs/Channel.cpp \
        srcs/CommandParser.cpp \
 	   srcs/Server.cpp \
+	   srcs/ServerCommands.cpp \
 
 OBJ_DIR = objs
 

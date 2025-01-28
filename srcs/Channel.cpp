@@ -12,6 +12,7 @@
 
 #include "../includes/Channel.hpp"
 #include <algorithm>
+#include <stdexcept>
 
 Channel::Channel(): creator(NULL)
 {}
