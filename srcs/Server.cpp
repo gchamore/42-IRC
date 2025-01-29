@@ -1,5 +1,11 @@
 #include "../includes/Server.hpp"
 
+// Suppression des définitions de constantes qui ne sont plus utilisées
+// const char* const Server::RPL_WELCOME = "001";
+// const char* const Server::ERR_NONICKNAMEGIVEN = "431";
+// const char* const Server::ERR_ERRONEUSNICKNAME = "432";
+// const char* const Server::ERR_NICKNAMEINUSE = "433";
+
 void handleCommand(const CommandParser::ParsedCommand &command, Client &client, const std::string &server_password);
 
 Server::Server(int port, const std::string &password) : port(port), server_password(password)
@@ -125,11 +131,11 @@ void Server::accept_new_client()
 
 		// Send a welcome message with command documentation
 		std::string welcome_message =
-			"Welcome to the server!\n"
-			"Please authenticate using PASS <password>.\n"
-			"After authentication, you can use the following commands:\n"
-			"- NICK <nickname>: Set your nickname.\n"
-			"- USER <username>: Complete your login.\n";
+			":server NOTICE Auth :*** Welcome to the IRC Network ***\r\n"
+			":server NOTICE Auth :*** Required registration steps:\r\n"
+			":server NOTICE Auth :*** 1. PASS <password>\r\n"
+			":server NOTICE Auth :*** 2. NICK <nickname> (letters, numbers, and -[]`^{})\r\n"
+			":server NOTICE Auth :*** 3. USER <username> <hostname> <servername> :<realname> - All fields required\r\n";
 		clients[client_fd]->sendResponse(welcome_message);
 
 		std::cout << "New client connected: " << client_fd << std::endl;

@@ -2,96 +2,123 @@
 
 void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
-	if (client.getState() == Client::REGISTERING)
-	{
-		if (command.command == "PASS")
-		{
-			handlePassCommand(command, client);
-		}
-		else if (command.command == "NICK")
-		{
-			handleNickCommand(command, client);
-		}
-		else if (command.command == "USER")
-		{
-			handleUserCommand(command, client);
-		}
-		else
-		{
-			client.sendResponse("451 :You have not registered");
-		}
-	}
-	else if (client.getState() == Client::REGISTERED)
-	{
-		if (command.command == "NICK")
-		{
-			handleNickCommand(command, client);
-		}
-		else if (command.command == "JOIN")
-		{
-			handleJoinCommand(command, client);
-		}
-		else if (command.command == "PRIVMSG")
-		{
-			handlePrivmsgCommand(command, client);
-		}
-		else if (command.command == "PART")
-		{
-			handlePartCommand(command, client);
-		}
-		else if (command.command == "QUIT")
-		{
-			handleQuitCommand(command, client);
-		}
-		else
-		{
-			client.sendResponse("421 " + command.command + " :Unknown command");
-		}
-	}
+    // CAP & PASS command must be first for non-authenticated clients
+    if (!client.authenticated())
+    {
+        if (command.command == "CAP")
+        {
+            std::cout << "CAP command received" << std::endl;
+            client.sendResponse("CAP * LS :multi-prefix sasl");  // Standard CAP LS response
+            std::cout << "CAP LS sent" << "\n" << std::endl;
+            return;
+        }
+        if (command.command == "PASS")
+        {
+            std::cout << "is Authenticated: " << client.authenticated() << std::endl;
+            handlePassCommand(command, client);
+            std::cout << "Pass command received: " << command.params[0] << std::endl;
+            std::cout << "is Authenticated: " << client.authenticated() << "\n" << std::endl;
+        }
+        return;  // Silently ignore other commands until authenticated
+    }
+
+    // Handle registration state commands
+    if (client.getState() == Client::REGISTERING)
+    {
+        if (command.command == "NICK")
+        {
+            std::cout << "Nick before: " << client.getNickname() << std::endl;
+            handleNickCommand(command, client);
+            std::cout << "Nick command received:" << command.params[0] << std::endl;
+            std::cout << "Nick after: " << client.getNickname() << "\n" << std::endl;
+        }
+        else if (command.command == "USER")
+        {
+            std::cout << "User before: " << client.getUsername() << std::endl;
+            handleUserCommand(command, client);
+            std::cout << "User command received:" << command.params[0] << std::endl;
+            std::cout << "User after: " << client.getUsername() << "\n" << std::endl;
+        }
+        else
+        {
+            client.sendResponse("451 :You have not registered");
+        }
+    }
+    else if (client.getState() == Client::REGISTERED)
+    {
+        if (command.command == "NICK")
+        {
+            handleNickCommand(command, client);
+        }
+        else if (command.command == "JOIN")
+        {
+            handleJoinCommand(command, client);
+        }
+        else if (command.command == "PRIVMSG")
+        {
+            handlePrivmsgCommand(command, client);
+        }
+        else if (command.command == "PART")
+        {
+            handlePartCommand(command, client);
+        }
+        else if (command.command == "QUIT")
+        {
+            handleQuitCommand(command, client);
+        }
+        else
+        {
+            client.sendResponse(":server 421 * " + command.command + " :Unknown command");
+        }
+    }
 }
 
 void Server::handlePassCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
-	if (client.authenticated())
-	{
-		client.sendResponse("462 ERR_ALREADYREGISTERED :You may not reregister");
-		return;
-	}
-	if (command.params.size() != 1)
-	{
-		client.sendResponse("461 PASS :Not enough parameters or too many parameters");
-		return;
-	}
-	if (command.params[0] != server_password)
-	{
-		client.sendResponse("464 ERR_PASSWDMISMATCH :Password incorrect");
-		return;
-	}
+    if (client.authenticated())
+    {
+        client.sendResponse(":server 462 * :You may not reregister");
+        return;
+    }
 
-	client.authenticate();
-	client.sendResponse("381 :You have successfully authenticated");
+    if (command.params.empty())
+    {
+        client.sendResponse(":server 461 * PASS :Not enough parameters");
+        return;
+    }
+
+    // Trim any whitespace from the password
+    std::string provided_password = command.params[0];
+    provided_password.erase(0, provided_password.find_first_not_of(" \t\r\n"));
+    provided_password.erase(provided_password.find_last_not_of(" \t\r\n") + 1);
+
+    if (provided_password != server_password)
+    {
+        client.sendResponse(":server 464 * :Password incorrect");
+        return;
+    }
+    client.authenticate();
+    client.sendResponse(":server NOTICE Auth :Password accepted");
 }
 
 bool Server::isValidNickname(const std::string &nickname)
 {
-	const std::string specialChars = "-[]`^{}";
+    const std::string specialChars = "-[]`^{}";
 
-	if (nickname.empty() || nickname.length() > 9)
-		return false;
+    if (nickname.empty() || nickname.length() > 9)
+        return false;
 
-	if (!std::isalpha(nickname[0]))
-		return false;
+    if (!std::isalpha(nickname[0]))
+        return false;
 
-	for (size_t i = 1; i < nickname.length(); ++i)
-	{
-		char c = nickname[i];
-		if (!std::isalnum(c) && specialChars.find(c) == std::string::npos)
-		{
-			return false;
-		}
-	}
+    for (size_t i = 1; i < nickname.length(); ++i)
+    {
+        char c = nickname[i];
+        if (!std::isalnum(c) && specialChars.find(c) == std::string::npos)
+            return false;
+    }
 
-	return true;
+    return true;
 }
 
 bool Server::isNicknameTaken(const std::string &nickname) const
@@ -108,23 +135,34 @@ bool Server::isNicknameTaken(const std::string &nickname) const
 
 void Server::handleNickCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
-	if (command.params.size() != 1)
-	{
-		client.sendResponse("461 NICK :Not enough parameters or too many parameters");
-		return;
-	}
-	if (!this->isValidNickname(command.params[0]))
-	{
-		client.sendResponse("432 ERR_ERRONEUSNICKNAME :Erroneous nickname");
-		return;
-	}
-	if (this->isNicknameTaken(command.params[0]))
-	{
-		client.sendResponse("433 ERR_NICKNAMEINUSE :Nickname is already in use");
-		return;
-	}
+    if (command.params.empty())
+    {
+        client.sendResponse(":server 431 * :No nickname given - Usage: NICK <nickname>");
+        return;
+    }
+    
+    std::string nick = command.params[0];
+    if (!this->isValidNickname(nick))
+    {
+        client.sendResponse(":server 432 * :Invalid nickname '" + nick + 
+                          "'. Nickname must start with a letter, be 1-9 chars long, and use only letters, numbers, or -[]`^{}");
+        return;
+    }
+    
+    if (this->isNicknameTaken(nick))
+    {
+        client.sendResponse(":server 433 * " + nick + 
+                          " :Nickname is already in use. Please choose another");
+        return;
+    }
 
-	client.setNickname(command.params[0]);
+    std::string oldNick = client.getNickname().empty() ? "*" : client.getNickname();
+    client.setNickname(nick);
+    if (oldNick == "*") {
+        client.sendResponse(":server NOTICE Auth :Nickname successfully set to " + nick);
+    } else {
+        client.sendResponse(":" + oldNick + " NICK :" + nick);
+    }
 }
 
 bool Server::isValidUsername(const std::string &username)
@@ -134,7 +172,7 @@ bool Server::isValidUsername(const std::string &username)
         return false;
 
     // Check allowed characters
-    for (size_t i = 0; i < username.length(); ++i)
+    for (size_t i = 0; username[i]; ++i)
     {
         char c = username[i];
         if (!std::isalnum(c) && c != '-' && c != '.' && c != '_' && c != '~')
@@ -148,36 +186,52 @@ bool Server::isValidUsername(const std::string &username)
 
 void Server::handleUserCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
-	if (client.getState() != Client::REGISTERING)
-	{
-		client.sendResponse("462 ERR_ALREADYREGISTERED :You may not reregister");
-		return;
-	}
-	if (client.getNickname().empty())
-	{
-		client.sendResponse("451 ERR_NOTREGISTERED :You have not registered");
-		return;
-	}
-	if (command.params.size() != 1) // if (command.params.size() < 4)
-	{
-		client.sendResponse("461 USER :Not enough parameters or too many parameters");
-		return;
-	}
-	if (!this->isValidUsername(command.params[0]))
-	{
-		client.sendResponse("432 ERR_ERRONEUSUSERNAME :Erroneous username");
-		return;
-	}
-	client.setUsername(command.params[0]);
-	client.setState(Client::REGISTERED);
-	client.sendResponse("001 " + client.getNickname() + " :Welcome to the IRC Network!");
+    if (client.getState() != Client::REGISTERING)
+    {
+        client.sendResponse(":server 462 * :You may not reregister");
+        return;
+    }
+    if (!client.authenticated())
+    {
+        client.sendResponse(":server 464 * :You must send PASS first");
+        return;
+    }
+    if (client.getNickname().empty())
+    {
+        client.sendResponse(":server 431 * :No nickname given");
+        return;
+    }
+
+    // La commande USER nécessite 4 paramètres selon RFC 2812:
+    // USER <username> <hostname> <servername> :<realname>
+    if (command.params.size() < 4)
+    {
+        client.sendResponse(":server 461 * USER :Not enough parameters. Usage: USER <username> <hostname> <servername> :<realname>");
+        return;
+    }
+
+    if (!this->isValidUsername(command.params[0]))
+    {
+        client.sendResponse(":server 432 * :Erroneous username");
+        return;
+    }
+
+    client.setUsername(command.params[0]);
+    client.setState(Client::REGISTERED);
+
+    // Envoyer une confirmation de l'username
+    client.sendResponse(":server NOTICE Auth :Username successfully set to " + command.params[0]);
+    
+    // Puis envoyer le message de bienvenue
+    client.sendResponse(":server 001 " + client.getNickname() + 
+                       " :Welcome to the IRC Network, " + client.getNickname() + "!");
 }
 
 void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
 	if (command.params.size() != 1)
 	{
-		client.sendResponse("461 JOIN :Not enough parameters or too many parameters");
+		client.sendResponse(":server 461 * JOIN :Not enough parameters");
 		return;
 	}
 	const std::string &channelName = command.params[0];
@@ -192,7 +246,7 @@ void Server::handlePrivmsgCommand(const CommandParser::ParsedCommand &command, C
 {
 	if (command.params.size() != 2)
 	{
-		client.sendResponse("461 PRIVMSG :Not enough parameters or too many parameters");
+		client.sendResponse(":server 461 * PRIVMSG :Not enough parameters");
 		return;
 	}
 	std::string channelName = command.params[0];
@@ -213,7 +267,7 @@ void Server::handlePartCommand(const CommandParser::ParsedCommand &command, Clie
 {
 	if (command.params.size() < 1)
 	{
-		client.sendResponse("461 PART :Not enough parameters or too many parameters");
+		client.sendResponse(":server 461 * PART :Not enough parameters");
 		return;
 	}
 	const std::string &channelName = command.params[0];

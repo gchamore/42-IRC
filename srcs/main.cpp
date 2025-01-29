@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:23 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/27 14:33:36 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/29 11:36:14 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ int main(int argc, char **argv)
 
 	std::string portArg = argv[1];
 	std::string server_password = argv[2];
+
+	// Add debug log for server password
+	std::cout << "Server starting with password: '" << server_password << "'" << std::endl;
 
 	std::stringstream ss(portArg);
 	int port;

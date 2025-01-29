@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:18 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/29 13:00:19 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/29 13:54:45 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
-// #include <algorithm> // Remove this line
+#include <cstdio>
 
 bool CommandParser::isValidCommand(const std::string &cmd)
 {
@@ -114,85 +114,83 @@ void CommandParser::parsePrefix(const std::string &raw, ParsedCommand::Prefix &p
 
 std::vector<CommandParser::ParsedCommand> CommandParser::parse(const std::string &rawMessage)
 {
-	std::vector<CommandParser::ParsedCommand> result;
+    std::vector<CommandParser::ParsedCommand> result;
 
-	// Validate message format
-	if (rawMessage.empty())
-		throw ParseError("Empty message");
-	
-	//decomment this when testing wit hreal client !!!!!!!!!!!!!!!!!!!!!!!!
-	if (!hasValidCRLF(rawMessage))
-        throw ParseError("Invalid message termination");
+    if (rawMessage.empty())
+        throw ParseError("Empty message");
 
-	std::cout << "rawMessage: " << rawMessage << std::endl;
-	
-	size_t start = 0, end = 0;
-	// std::string message = rawMessage + "\r\n"; //only for testing !!!!!!!!!!!!! change for rawMessage
-	
-	while ((end = rawMessage.find("\r\n", start)) != std::string::npos)
-	{
-		std::string message = rawMessage.substr(start, end - start);
-        start = end + 2;
+    // Debug avec \r\n visibles
+    std::cout << "Raw message (" << rawMessage.length() << " bytes): '";
+    for (size_t i = 0; i < rawMessage.length(); ++i)
+    {
+        if (rawMessage[i] == '\r')
+            std::cout << "\\r";
+        else if (rawMessage[i] == '\n')
+            std::cout << "\\n";
+        else
+            std::cout << rawMessage[i];
+    }
+    std::cout << "'" << std::endl;
 
-		if (message.empty())
-			continue;
-		
-		ParsedCommand command;
+    // Enlever le \r\n pour le parsing
+    std::string cmdLine = rawMessage;
+    if (cmdLine.length() >= 2 && cmdLine.substr(cmdLine.length() - 2) == "\r\n")
+        cmdLine = cmdLine.substr(0, cmdLine.length() - 2);
 
-		// Parse prefix
-		size_t pos = 0;
-		if (message[0] == ':')
-		{
-			size_t spacePos = message.find(' ');
-			if (spacePos == std::string::npos)
-				throw ParseError("Malformed prefix");
-			parsePrefix(message.substr(0, spacePos), command.prefix);
-			pos = spacePos + 1;
-		}
+    // Traiter la commande même sans \r\n (temporairement)
+    ParsedCommand command;
+    size_t pos = 0;
 
-		// Parse command
-		size_t spacePos = message.find(' ', pos);
-		if (spacePos == std::string::npos)
-			spacePos = message.length();
-		command.command = message.substr(pos, spacePos - pos);
-		if (!isValidCommand(command.command))
-			throw ParseError("Invalid command format");
+    // Parse prefix if exists
+    if (cmdLine[0] == ':')
+    {
+        size_t spacePos = cmdLine.find(' ');
+        if (spacePos == std::string::npos)
+            throw ParseError("Malformed prefix");
+        parsePrefix(cmdLine.substr(0, spacePos), command.prefix);
+        pos = spacePos + 1;
+    }
 
-		// Parse parameters
-		pos = spacePos;
-		std::vector<std::string> tempParams;
-		while (pos != std::string::npos)
-		{
-			pos = message.find_first_not_of(' ', pos);
-			if (pos == std::string::npos)
-				break;
+    // Parse command
+    size_t spacePos = cmdLine.find(' ', pos);
+    if (spacePos == std::string::npos)
+        spacePos = cmdLine.length();
+    command.command = cmdLine.substr(pos, spacePos - pos);
+    if (!isValidCommand(command.command))
+        throw ParseError("Invalid command format");
 
-			if (message[pos] == ':')
-			{
-				// Trailing parameter
-				tempParams.push_back(message.substr(pos + 1));
-				break;
-			}
+    // Parse parameters
+    pos = spacePos;
+    std::vector<std::string> tempParams;
+    while (pos != std::string::npos && pos < cmdLine.length())
+    {
+        pos = cmdLine.find_first_not_of(' ', pos);
+        if (pos == std::string::npos)
+            break;
 
-			spacePos = message.find(' ', pos);
-			if (spacePos == std::string::npos)
-				spacePos = message.length();
-			std::string param = message.substr(pos, spacePos - pos);
-			if (!param.empty())
-			{
-				tempParams.push_back(param);
-				if (tempParams.size() > MAX_PARAMS)
-					throw ParseError("Too many parameters");
-			}
-			pos = spacePos;
-		}
+        if (cmdLine[pos] == ':')
+        {
+            // Trailing parameter
+            tempParams.push_back(cmdLine.substr(pos + 1));
+            break;
+        }
 
-		command.params = tempParams;
-		result.push_back(command);
-	}
-	if (result.empty())
-		throw ParseError("Empty message");
-	return result;
+        spacePos = cmdLine.find(' ', pos);
+        if (spacePos == std::string::npos)
+            spacePos = cmdLine.length();
+        std::string param = cmdLine.substr(pos, spacePos - pos);
+        if (!param.empty())
+        {
+            tempParams.push_back(param);
+            if (tempParams.size() > MAX_PARAMS)
+                throw ParseError("Too many parameters");
+        }
+        pos = spacePos;
+    }
+
+    command.params = tempParams;
+    result.push_back(command);
+    return result;
 }
 
 CommandParser::ParseError::ParseError(const std::string &msg)

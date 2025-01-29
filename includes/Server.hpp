@@ -1,4 +1,3 @@
-
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
@@ -17,6 +16,7 @@
 #include "Client.hpp"
 #include "Channel.hpp"
 #include "CommandParser.hpp"
+#include <sstream>
 
 class Client;
 class Channel;

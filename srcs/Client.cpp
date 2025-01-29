@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:21 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/23 15:37:18 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/29 13:54:45 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,31 +80,55 @@ void Client::authenticate()
 
 void Client::appendToBuffer(const std::string &data)
 {
-	buffer += data;
+    std::string normalizedData = data;
+    
+    // Ajouter \r\n à la fin si nécessaire
+    if (!normalizedData.empty() && 
+        (normalizedData[normalizedData.length() - 1] != '\n' ||
+         (normalizedData.length() >= 2 && normalizedData[normalizedData.length() - 2] != '\r')))
+    {
+        // Si se termine par \n, ajouter \r avant
+        if (normalizedData[normalizedData.length() - 1] == '\n')
+            normalizedData.insert(normalizedData.length() - 1, "\r");
+        else
+            normalizedData += "\r\n";
+    }
+
+    buffer += normalizedData;
 }
 
 bool Client::hasCommand() const
 {
-	return buffer.find("\n") != std::string::npos;
+    // On ne cherche que \r\n selon la RFC
+    return buffer.find("\r\n") != std::string::npos;
 }
 
 std::string Client::popCommand()
 {
-	size_t pos = buffer.find("\n");
-	if (pos == std::string::npos)
-		throw std::logic_error("No command available");
-	std::string command = buffer.substr(0, pos);
-	buffer.erase(0, pos + 1);
-	return command;
+    size_t pos = buffer.find("\r\n");
+    if (pos == std::string::npos)
+        throw std::logic_error("No complete command available");
+
+    // Inclure le \r\n dans la commande retournée
+    std::string command = buffer.substr(0, pos + 2);  // +2 pour inclure \r\n
+    buffer.erase(0, pos + 2);
+    return command;
 }
 
 void Client::sendResponse(const std::string &response)
 {
-	std::string responseWithNewline = response + "\r\n";
-	if (send(fd, responseWithNewline.c_str(), responseWithNewline.length(), 0) < 0)
-	{
-		throw std::runtime_error("Could not send response");
-	}
+    // Forcer CRLF à la fin
+    std::string responseWithCRLF = response;
+    if (responseWithCRLF.length() < 2 || 
+        responseWithCRLF.substr(responseWithCRLF.length() - 2) != "\r\n")
+    {
+        responseWithCRLF += "\r\n";
+    }
+
+    if (send(fd, responseWithCRLF.c_str(), responseWithCRLF.length(), 0) < 0)
+    {
+        throw std::runtime_error("Could not send response");
+    }
 }
 
 std::vector<Channel *> Client::getChannels(const Server &server) const
