@@ -1,4 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ServerCommands.cpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
+/*   Updated: 2025/01/29 15:41:21 by anferre          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/Server.hpp"
+
+static std::vector<std::string> split(const std::string &input, char delimiter)
+{
+    std::vector<std::string> result;
+    std::stringstream ss(input);
+    std::string token;
+
+    while (std::getline(ss, token, delimiter))
+    {
+        result.push_back(token);
+    }
+
+    return result;
+}
 
 void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
@@ -42,6 +68,22 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 		else if (command.command == "QUIT")
 		{
 			handleQuitCommand(command, client);
+		}
+		else if (command.command == "MODE")
+		{
+			handleModeCommand(client, command);
+		}
+		else if (command.command == "KICK")
+		{
+			handleKickCommand(client, command);
+		}
+		else if (command.command == "INVITE")
+		{
+			handleInviteCommand(client, command);
+		}
+		else if (command.command == "TOPIC")
+		{
+			handleTopicCommand(client, command);
 		}
 		else
 		{
@@ -123,7 +165,10 @@ void Server::handleNickCommand(const CommandParser::ParsedCommand &command, Clie
 		client.sendResponse("433 ERR_NICKNAMEINUSE :Nickname is already in use");
 		return;
 	}
-
+	if (!client.getNickname().empty())
+	{ 
+		std::string notification = ":" + client.getNickname() + " changed NICK for :" + command.params[0];
+	}
 	client.setNickname(command.params[0]);
 }
 
@@ -173,19 +218,93 @@ void Server::handleUserCommand(const CommandParser::ParsedCommand &command, Clie
 	client.sendResponse("001 " + client.getNickname() + " :Welcome to the IRC Network!");
 }
 
+bool Server::isValidChannelName(const std::string &channelName)
+{
+	if (channelName.empty() || channelName.length() > 50)
+	{
+		return false;
+	}
+	if (channelName[0] != '#' && channelName[0] != '&')
+	{
+		return false;
+	}
+	return true;
+}
+
 void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
-	if (command.params.size() != 1)
+	if (command.params.empty())
 	{
 		client.sendResponse("461 JOIN :Not enough parameters or too many parameters");
 		return;
 	}
-	const std::string &channelName = command.params[0];
-	if (channels.find(channelName) == channels.end())
+	std::vector<std::string> channelNames = split(command.params[0], ',');
+	std::vector<std::string> passwords;
+	if (command.params.size() > 1)
 	{
-		channels[channelName] = new Channel(channelName, &client);
+		passwords = split(command.params[1], ',');
 	}
-	channels[channelName]->addMember(&client);
+
+	if (!passwords.empty() && channelNames.size() != passwords.size())
+	{
+		client.sendResponse("461 JOIN :Not enough parameters or too many parameters");
+		return;
+	}
+
+	for (size_t i = 0; i < channelNames.size(); ++i)
+	{
+		std::string channelName = channelNames[i];
+		std::string providedPassword = (i < passwords.size()) ? passwords[i] : "";
+
+		if (isValidChannelName(channelName))
+		{
+			client.sendResponse("403 " + channelName + " :No such channel");
+			return;
+		}
+
+		bool newChannel = false;
+		if (channels.find(channelName) == channels.end())
+		{
+			channels[channelName] = new Channel(channelName, &client);
+			newChannel = true;
+		}
+
+		Channel *channel = channels[channelName];
+
+		// Add the password to the channel if it's a new channel
+		if (newChannel && !providedPassword.empty())
+		{
+			channel->setPassword(providedPassword);
+		}
+		else if (!newChannel && channel->hasPassword() && providedPassword != channel->getPassword())
+		{
+			client.sendResponse("475 " + channelName + " :Cannot join channel (+k)");
+			return;
+		}
+		
+		if (channel->isFull())
+		{
+			client.sendResponse("471 " + channelName + " :Cannot join channel (+l)");
+			return;
+		}
+
+		if (channel->hasPassword() && channel->getPassword() != providedPassword)
+		{
+			client.sendResponse("475 " + channelName + " :Cannot join channel (+k)");
+			return;
+		}
+
+		if (channel->isInviteOnly() && !channel->isInvited(&client))
+		{
+			client.sendResponse("473 " + channelName + " :Cannot join channel (+i)");
+			return;
+		}
+
+		channels[channelName]->addMember(&client);
+		channel->removeInvite(&client);
+		std::string notification = ":" + client.getNickname() + "!" + client.getUsername() + " JOIN :" + channelName;
+		this->broadcast_message(channelName, notification);
+	}
 }
 
 void Server::handlePrivmsgCommand(const CommandParser::ParsedCommand &command, Client &client)
