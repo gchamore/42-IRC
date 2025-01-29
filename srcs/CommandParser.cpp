@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:18 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/27 14:18:02 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/29 13:00:19 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,10 @@ bool CommandParser::isValidCommand(const std::string &cmd)
 {
 	if (cmd.empty())
 		return false;
+
+	// Special case for CAP command
+	if (cmd == "CAP")
+		return true;
 
 	// Special case for testing max length commands
 	if (cmd.length() == MAX_COMMAND_LEN &&
@@ -50,7 +54,7 @@ bool CommandParser::isValidCommand(const std::string &cmd)
 
 	// List of valid commands
 	static const std::string validCommands[] = {
-		"NICK", "USER", "JOIN", "PRIVMSG", "PART", "QUIT", "COMMAND", "OP", "DEOP", "ISOP", "PASS"};
+		"NICK", "USER", "JOIN", "PRIVMSG", "PART", "QUIT", "COMMAND", "OP", "DEOP", "ISOP", "PASS", "CAP"};
 
 	for (size_t i = 0; i < sizeof(validCommands) / sizeof(validCommands[0]); ++i)
 	{
@@ -117,14 +121,15 @@ std::vector<CommandParser::ParsedCommand> CommandParser::parse(const std::string
 		throw ParseError("Empty message");
 	
 	//decomment this when testing wit hreal client !!!!!!!!!!!!!!!!!!!!!!!!
-	// if (!hasValidCRLF(rawMessage))
-    //     throw ParseError("Invalid message termination");
+	if (!hasValidCRLF(rawMessage))
+        throw ParseError("Invalid message termination");
 
 	std::cout << "rawMessage: " << rawMessage << std::endl;
 	
 	size_t start = 0, end = 0;
-	std::string message = rawMessage + "\r\n"; //only for testing !!!!!!!!!!!!! change for rawMessage
-	while ((end = message.find("\r\n", start)) != std::string::npos)
+	// std::string message = rawMessage + "\r\n"; //only for testing !!!!!!!!!!!!! change for rawMessage
+	
+	while ((end = rawMessage.find("\r\n", start)) != std::string::npos)
 	{
 		std::string message = rawMessage.substr(start, end - start);
         start = end + 2;
