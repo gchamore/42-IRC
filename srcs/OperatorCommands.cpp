@@ -57,8 +57,10 @@ void Server::handleKickCommand(Client &client, const CommandParser::ParsedComman
 		return;
 	}
 
-	std::string notification = ":" + client.getNickname() + " KICK " + channelName + " " + nickname + " :" + reason;
+	std::string notification = ":" + client.getNickname() + "!" + client.getUsername() + "@" + "localhost" \
+	+ " KICK " + channelName + " " + nickname + " :" + reason;
 	this->broadcast_message(channelName, notification);
+	target->sendResponse(":" + client.getNickname() + " KICK " + channelName + " " + nickname + " :" + reason);
 
 	channel->removeMember(target);
 }
@@ -267,7 +269,6 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 
 	bool adding = true;
 	size_t paramIndex = 2;
-	Client *target = NULL;
 
 	for (std::string::size_type i = 0; i < modeChange.size(); ++i)
 	{

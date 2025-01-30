@@ -141,6 +141,10 @@ std::string Client::popCommand()
 
 void Client::sendResponse(const std::string &response)
 {
+    if (DEBUG_MODE)
+    {
+        std::cout << "Sending to" << this->nickname << ": " << response << std::endl;
+    }
     // Forcer CRLF à la fin
     std::string responseWithCRLF = response;
     if (responseWithCRLF.length() < 2 || 

@@ -445,22 +445,50 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 
 void Server::handlePrivmsgCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
-	if (command.params.size() != 2)
+	if (command.params.size() < 2)
 	{
 		client.sendResponse(":server 461 * PRIVMSG :Not enough parameters");
 		return;
 	}
-	std::string channelName = command.params[0];
+	std::string target = command.params[0];
 	std::string message = command.params[1];
-	if (channels.find(channelName) != channels.end())
+
+	if (target.empty() || message.empty())
 	{
-		Channel *channel = channels[channelName];
-		const std::vector<Client *> &members = channel->getMembers();
-		for (std::vector<Client *>::const_iterator it = members.begin(); it != members.end(); ++it)
+		client.sendResponse(":server 411 * PRIVMSG :No recipient given");
+		return;
+	}
+
+	if (target[0] == '#')
+	{
+		if (channels.find(target) == channels.end())
 		{
-			Client *member = *it;
-			std::cout << "Message to " << member->getNickname() << ": " << message << "\n";
+			client.sendResponse(":server 403 * " + target + " :No such channel");
+			return;
 		}
+
+		Channel *channel = channels[target];
+
+		if (!channel->isMember(&client))
+		{
+			client.sendResponse(":server 442 * " + target + " :You're not on that channel");
+			return;
+		}
+
+		std::string msg = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost PRIVMSG " + target + " :" + message;
+		broadcast_message(target, msg);
+	}
+	else
+	{
+		Client *targetClient = this->getClientByNickname(target);
+		if (targetClient == NULL)
+		{
+			client.sendResponse(":server 401 * " + target + " :No such nick");
+			return;
+		}
+
+		std::string msg = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost PRIVMSG " + target + " :" + message;
+		targetClient->sendResponse(msg);
 	}
 }
 
@@ -472,12 +500,20 @@ void Server::handlePartCommand(const CommandParser::ParsedCommand &command, Clie
 		return;
 	}
 	const std::string &channelName = command.params[0];
+	const std::string reason = (command.params.size() > 1) ? command.params[1] : "Leaving";
 	if (channels.find(channelName) != channels.end())
 	{
+		Client *targetClient = this->getClientByNickname(client.getNickname());
+		if (channels[channelName]->isOperator(targetClient)) {
+        std::string modeMessage = ":server.com MODE " + channelName + " -o " + client.getNickname();
+        this->broadcast_message(channelName, modeMessage);
+        targetClient->sendResponse(modeMessage);
+    }
 		// Annoncer le départ aux autres membres
-		std::string partMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@server PART " + channelName;
+		std::string partMsg = ":" + client.getNickname() + "!" + client.getUsername() + \
+		"@localhost PART " + channelName + " :" + reason;
 		broadcast_message(channelName, partMsg);
-
+		client.sendResponse(partMsg);
 		channels[channelName]->removeMember(&client);
 
 		// Si le canal est vide, le supprimer
