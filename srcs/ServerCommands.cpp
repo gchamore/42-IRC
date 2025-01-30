@@ -135,33 +135,60 @@ bool Server::isNicknameTaken(const std::string &nickname) const
 
 void Server::handleNickCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
-    if (command.params.empty())
-    {
-        client.sendResponse(":server 431 * :No nickname given - Usage: NICK <nickname>");
-        return;
-    }
-    
-    std::string nick = command.params[0];
-    if (!this->isValidNickname(nick))
-    {
-        client.sendResponse(":server 432 * :Invalid nickname '" + nick + 
-                          "'. Nickname must start with a letter, be 1-9 chars long, and use only letters, numbers, or -[]`^{}");
-        return;
-    }
-    
-    if (this->isNicknameTaken(nick))
-    {
-        client.sendResponse(":server 433 * " + nick + 
-                          " :Nickname is already in use. Please choose another");
-        return;
-    }
+    try {
+        if (command.params.empty() || command.params[0].empty())
+        {
+            client.sendResponse(":server 431 * :No nickname given - Usage: NICK <nickname>");
+            return;
+        }
+        
+        std::string nick = command.params[0];
+        std::cout << "Attempting to set nickname: '" << nick << "'" << std::endl;
+        
+        if (!this->isValidNickname(nick))
+        {
+            client.sendResponse(":server 432 * :Invalid nickname '" + nick + 
+                              "'. Nickname must start with a letter, be 1-9 chars long, and use only letters, numbers, or -[]`^{}");
+            return;
+        }
+        
+        // Si le nickname est déjà pris, ajouter un suffixe numérique
+        std::string originalNick = nick;
+        int suffix = 1;
+        while (this->isNicknameTaken(nick))
+        {
+            // Si c'est le même client qui essaie de changer son propre nickname
+            if (!client.getNickname().empty() && client.getNickname() == nick)
+                break;
 
-    std::string oldNick = client.getNickname().empty() ? "*" : client.getNickname();
-    client.setNickname(nick);
-    if (oldNick == "*") {
-        client.sendResponse(":server NOTICE Auth :Nickname successfully set to " + nick);
-    } else {
-        client.sendResponse(":" + oldNick + " NICK :" + nick);
+            std::stringstream ss;
+            ss << originalNick << suffix++;
+            nick = ss.str();
+
+            // Vérifier que le nouveau nickname avec suffixe est toujours valide
+            if (nick.length() > 9)
+            {
+                client.sendResponse(":server 433 * " + originalNick + 
+                                  " :Nickname is already in use and alternative too long. Please choose another");
+                return;
+            }
+        }
+
+        std::string oldNick = client.getNickname().empty() ? "*" : client.getNickname();
+        client.setNickname(nick);
+        
+        if (oldNick == "*") {
+            client.sendResponse(":server NOTICE Auth :Nickname set to " + nick + 
+                              (nick != originalNick ? " (original choice was taken)" : ""));
+        } else {
+            client.sendResponse(":" + oldNick + " NICK :" + nick);
+        }
+        
+        std::cout << "Nickname set to: '" << nick << "'" << std::endl;
+    } 
+    catch (const std::exception& e) {
+        std::cerr << "Error in handleNickCommand: " << e.what() << std::endl;
+        client.sendResponse(":server 432 * :Error setting nickname: " + std::string(e.what()));
     }
 }
 
@@ -460,20 +487,32 @@ void Server::handleWhoCommand(const CommandParser::ParsedCommand &command, Clien
         Channel *channel = channels[target];
         const std::vector<Client *> &members = channel->getMembers();
         
-        std::cout << "Listing members for " << target << ":" << std::endl;
+        // Envoyer d'abord les informations du canal
+        client.sendResponse(":server 324 " + client.getNickname() + " " + target + " Channel members:");
+        
         for (std::vector<Client *>::const_iterator it = members.begin(); it != members.end(); ++it)
         {
-            std::string flags = "H";  // H pour "Here"
-            if (channel->isOperator(*it))
-                flags += "@";
-                
-            // Format standard WHO response
-            client.sendResponse(":server 352 " + client.getNickname() + " " + target + " " +
-                              (*it)->getUsername() + " server server " + (*it)->getNickname() +
-                              " " + flags + " :0 " + (*it)->getNickname());
+            std::string prefix = channel->isOperator(*it) ? "@" : "";
+            std::string roleSymbol = channel->isOperator(*it) ? "channel operator" : "member";
             
-            std::cout << "- " << (*it)->getNickname() << " (" << flags << ")" << std::endl;
+            // Format: "<channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>"
+            client.sendResponse(":server 352 " + client.getNickname() + " " + target +
+                            " " + (*it)->getUsername() +      // username
+                            " " + target +                    // host
+                            " irc.server" +                  // server
+                            " " + (*it)->getNickname() +     // nickname
+                            " H" + prefix +                  // Here + operator status
+                            " :0 " + roleSymbol);           // hopcount + role
         }
-        client.sendResponse(":server 315 " + client.getNickname() + " " + target + " :End of WHO list");
+
+        // Message de fin avec un résumé
+        std::stringstream ss;
+        ss << members.size();
+        client.sendResponse(":server 315 " + client.getNickname() + " " + target + 
+                          " :End of WHO list (" + ss.str() + " members)");
+    }
+    else
+    {
+        client.sendResponse(":server 403 " + client.getNickname() + " " + target + " :No such channel");
     }
 }

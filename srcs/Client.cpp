@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:21 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/30 12:12:28 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 12:35:54 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,32 @@ const std::string &Client::getNickname() const
 
 void Client::setNickname(const std::string &nick)
 {
-	if (nick.empty())
-	{
-		throw std::invalid_argument("Nickname cannot be empty");
-	}
-	nickname = nick;
+    if (nick.empty() || nick == " ")
+    {
+        throw std::invalid_argument("Nickname cannot be empty or just whitespace");
+    }
+    if (nick.length() > 9)
+    {
+        throw std::invalid_argument("Nickname cannot be longer than 9 characters");
+    }
+    
+    // Vérification supplémentaire des caractères valides
+    const std::string specialChars = "-[]`^{}";
+    if (!std::isalpha(nick[0]))
+    {
+        throw std::invalid_argument("Nickname must start with a letter");
+    }
+    
+    for (size_t i = 1; i < nick.length(); ++i)
+    {
+        char c = nick[i];
+        if (!std::isalnum(c) && specialChars.find(c) == std::string::npos)
+        {
+            throw std::invalid_argument("Invalid character in nickname");
+        }
+    }
+    
+    nickname = nick;
 }
 
 const std::string &Client::getUsername() const
