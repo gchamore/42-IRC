@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+         #
+#    By: anferre <anferre@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/16 15:30:31 by gchamore          #+#    #+#              #
-#    Updated: 2025/01/23 15:50:58 by gchamore         ###   ########.fr        #
+#    Updated: 2025/01/29 13:11:51 by anferre          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ SRCS = srcs/main.cpp \
        srcs/CommandParser.cpp \
 	   srcs/Server.cpp \
 	   srcs/ServerCommands.cpp \
+	   srcs/OperatorCommands.cpp \
 
 OBJ_DIR = objs
 

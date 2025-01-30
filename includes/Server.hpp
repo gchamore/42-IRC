@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <cstring>
+#include <sstream>
 #include <algorithm>
 #include <cstdio>
 #include <fcntl.h>
@@ -40,6 +41,7 @@ private:
 	void broadcast_message(const std::string &channelName, const std::string &message, Client *exclude);
 	void delete_channel(const std::string &channelName);
 
+	//serverCommands
 	void handleCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handlePassCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handleNickCommand(const CommandParser::ParsedCommand &command, Client &client);
@@ -48,12 +50,19 @@ private:
 	void handleUserCommand(const CommandParser::ParsedCommand &command, Client &client);
 	bool isValidUsername(const std::string &username);
 	void handleJoinCommand(const CommandParser::ParsedCommand &command, Client &client);
+	bool isValidChannelName(const std::string &channelName) const	
 	void handlePrivmsgCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handlePartCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handleQuitCommand(const CommandParser::ParsedCommand &command, Client &client);
-	void handleModeCommand(const CommandParser::ParsedCommand &command, Client &client);
+	void handleModeCommand(Client &client, const CommandParser::ParsedCommand &command);
 	void handleWhoCommand(const CommandParser::ParsedCommand &command, Client &client);
 	bool isValidChannelName(const std::string &channelName) const;
+
+	//operatorCommands 
+	Client *getClientByNickname(const std::string &nickname);
+	void handleKickCommand(Client &client, const CommandParser::ParsedCommand &command);
+	void handleInviteCommand(Client &client, const CommandParser::ParsedCommand &command);
+	void handleTopicCommand(Client &client, const CommandParser::ParsedCommand &command);
 
 public:
 	Server(int port, const std::string &password);
