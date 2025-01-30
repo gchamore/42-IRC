@@ -214,6 +214,23 @@ void Server::broadcast_message(const std::string &channelName, const std::string
 	}
 }
 
+void Server::broadcast_message(const std::string &channelName, const std::string &message, Client *exclude)
+{
+    if (channels.find(channelName) != channels.end())
+    {
+        Channel *channel = channels[channelName];
+        const std::vector<Client *> &members = channel->getMembers();
+        for (std::vector<Client *>::const_iterator it = members.begin(); it != members.end(); ++it)
+        {
+            Client *member = *it;
+            if (member != exclude)  // Skip the excluded client
+            {
+                member->sendResponse(message);
+            }
+        }
+    }
+}
+
 void Server::delete_channel(const std::string& channelName)
 {
 	if (channels.find(channelName) != channels.end())

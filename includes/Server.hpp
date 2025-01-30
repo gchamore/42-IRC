@@ -17,6 +17,7 @@
 #include "Channel.hpp"
 #include "CommandParser.hpp"
 #include <sstream>
+#include <ctime>  // Ajout pour time(NULL)
 
 class Client;
 class Channel;
@@ -36,6 +37,7 @@ private:
 	void handle_client_data(int client_fd);
 	void remove_client(int client_fd);
 	void broadcast_message(const std::string &channelName, const std::string &message);
+	void broadcast_message(const std::string &channelName, const std::string &message, Client *exclude);
 	void delete_channel(const std::string &channelName);
 
 	void handleCommand(const CommandParser::ParsedCommand &command, Client &client);
@@ -49,6 +51,9 @@ private:
 	void handlePrivmsgCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handlePartCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handleQuitCommand(const CommandParser::ParsedCommand &command, Client &client);
+	void handleModeCommand(const CommandParser::ParsedCommand &command, Client &client);
+	void handleWhoCommand(const CommandParser::ParsedCommand &command, Client &client);
+	bool isValidChannelName(const std::string &channelName) const;
 
 public:
 	Server(int port, const std::string &password);

@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:18 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/29 13:54:45 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 12:11:57 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,51 +18,65 @@
 
 bool CommandParser::isValidCommand(const std::string &cmd)
 {
-	if (cmd.empty())
-		return false;
+    if (cmd.empty())
+        return false;
 
-	// Special case for CAP command
-	if (cmd == "CAP")
-		return true;
+    // Special case for CAP command
+    if (cmd == "CAP")
+        return true;
 
-	// Special case for testing max length commands
-	if (cmd.length() == MAX_COMMAND_LEN &&
-		std::string(cmd.length(), 'a') == cmd)
-		return true;
+    // Special case for testing max length commands
+    if (cmd.length() == MAX_COMMAND_LEN &&
+        std::string(cmd.length(), 'a') == cmd)
+        return true;
 
-	// Check if command is 3 digits
-	if (cmd.length() == 3)
-	{
-		for (std::string::const_iterator it = cmd.begin(); it != cmd.end(); ++it)
-		{
-			if (!isdigit(*it))
-				return false;
-		}
-		return true;
-	}
+    // Check if command is too long
+    if (cmd.length() > MAX_COMMAND_LEN)
+        return false;
 
-	// Check if command is too long (except for special test case)
-	if (cmd.length() > MAX_COMMAND_LEN)
-		return false;
+    // Convert command to uppercase for comparison
+    std::string upperCmd = cmd;
+    for (size_t i = 0; i < upperCmd.length(); ++i)
+    {
+        upperCmd[i] = std::toupper(upperCmd[i]);
+    }
 
-	// Check if command is all letters
-	for (std::string::const_iterator it = cmd.begin(); it != cmd.end(); ++it)
-	{
-		if (!isalpha(*it))
-			return false;
-	}
+    // Check if command is 3 digits
+    if (upperCmd.length() == 3)
+    {
+        bool allDigits = true;
+        for (std::string::const_iterator it = upperCmd.begin(); it != upperCmd.end(); ++it)
+        {
+            if (!std::isdigit(*it))
+            {
+                allDigits = false;
+                break;
+            }
+        }
+        if (allDigits)
+            return true;
+    }
 
-	// List of valid commands
-	static const std::string validCommands[] = {
-		"NICK", "USER", "JOIN", "PRIVMSG", "PART", "QUIT", "COMMAND", "OP", "DEOP", "ISOP", "PASS", "CAP"};
+    // List of valid commands (all in uppercase)
+    static const std::string validCommands[] =
+    {
+        "NICK", "USER", "JOIN", "PRIVMSG", "PART", "QUIT",
+        "PASS", "CAP", "MODE", "WHO", "LIST",
+        "TOPIC", "NAMES", "KICK"
+    };
 
-	for (size_t i = 0; i < sizeof(validCommands) / sizeof(validCommands[0]); ++i)
-	{
-		if (cmd == validCommands[i])
-			return true;
-	}
+    // Check if command is in the list
+    for (size_t i = 0; i < sizeof(validCommands) / sizeof(validCommands[0]); ++i)
+    {
+        if (upperCmd == validCommands[i])
+        {
+            std::cout << "Command '" << cmd << "' is valid" << std::endl;
+            return true;
+        }
+    }
 
-	return false;
+    std::cout << "Command '" << cmd << "' is invalid" << std::endl;
+    return false;
 }
 
 bool CommandParser::isValidParams(const std::vector<std::string> &params)
@@ -120,7 +134,7 @@ std::vector<CommandParser::ParsedCommand> CommandParser::parse(const std::string
         throw ParseError("Empty message");
 
     // Debug avec \r\n visibles
-    std::cout << "Raw message (" << rawMessage.length() << " bytes): '";
+    std::cout << "\nRaw message (" << rawMessage.length() << " bytes): '";
     for (size_t i = 0; i < rawMessage.length(); ++i)
     {
         if (rawMessage[i] == '\r')

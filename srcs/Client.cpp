@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:21 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/29 13:54:45 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 12:12:28 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,26 +80,22 @@ void Client::authenticate()
 
 void Client::appendToBuffer(const std::string &data)
 {
-    std::string normalizedData = data;
-    
-    // Ajouter \r\n à la fin si nécessaire
-    if (!normalizedData.empty() && 
-        (normalizedData[normalizedData.length() - 1] != '\n' ||
-         (normalizedData.length() >= 2 && normalizedData[normalizedData.length() - 2] != '\r')))
-    {
-        // Si se termine par \n, ajouter \r avant
-        if (normalizedData[normalizedData.length() - 1] == '\n')
-            normalizedData.insert(normalizedData.length() - 1, "\r");
-        else
-            normalizedData += "\r\n";
-    }
+    // Debug simple du buffer
+    // std::cout << "Current buffer before append: '" << buffer << "'" << std::endl;
+    // std::cout << "New data to append: '" << data << "'" << std::endl;
 
-    buffer += normalizedData;
+    buffer += data;
+
+    // Nettoyage des doubles CRLF potentiels
+    size_t pos;
+    while ((pos = buffer.find("\r\n\r\n")) != std::string::npos)
+    {
+        buffer.erase(pos, 2);  // Supprime un des deux \r\n
+    }
 }
 
 bool Client::hasCommand() const
 {
-    // On ne cherche que \r\n selon la RFC
     return buffer.find("\r\n") != std::string::npos;
 }
 
@@ -109,9 +105,12 @@ std::string Client::popCommand()
     if (pos == std::string::npos)
         throw std::logic_error("No complete command available");
 
-    // Inclure le \r\n dans la commande retournée
-    std::string command = buffer.substr(0, pos + 2);  // +2 pour inclure \r\n
+    std::string command = buffer.substr(0, pos + 2);
     buffer.erase(0, pos + 2);
+
+    // Debug simple de la commande
+    // std::cout << "Popped command: '" << command.substr(0, command.length() - 2) << "'" << std::endl;
+
     return command;
 }
 
