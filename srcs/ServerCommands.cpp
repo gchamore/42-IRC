@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/01/30 14:16:08 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 14:35:14 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -499,50 +499,4 @@ void Server::handleQuitCommand(const CommandParser::ParsedCommand &command, Clie
 	}
 	std::cout << client.getNickname() << " has quit the server.\n";
 	this->remove_client(client.getFD());
-}
-
-void Server::handleWhoCommand(const CommandParser::ParsedCommand &command, Client &client)
-{
-    if (command.params.empty())
-    {
-        client.sendResponse(":server 461 " + client.getNickname() + " WHO :Not enough parameters");
-        return;
-    }
-
-    std::string target = command.params[0];
-    std::cout << "WHO request for target: " << target << std::endl;
-
-    if (channels.find(target) != channels.end())
-    {
-        Channel *channel = channels[target];
-        const std::vector<Client *> &members = channel->getMembers();
-        
-        // Envoyer d'abord les informations du canal
-        client.sendResponse(":server 324 " + client.getNickname() + " " + target + " Channel members:");
-        
-        for (std::vector<Client *>::const_iterator it = members.begin(); it != members.end(); ++it)
-        {
-            std::string prefix = channel->isOperator(*it) ? "@" : "";
-            std::string roleSymbol = channel->isOperator(*it) ? "channel operator" : "member";
-            
-            // Format: "<channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>"
-            client.sendResponse(":server 352 " + client.getNickname() + " " + target +
-                            " " + (*it)->getUsername() +      // username
-                            " " + target +                    // host
-                            " irc.server" +                  // server
-                            " " + (*it)->getNickname() +     // nickname
-                            " H" + prefix +                  // Here + operator status
-                            " :0 " + roleSymbol);           // hopcount + role
-        }
-
-        // Message de fin avec un résumé
-        std::stringstream ss;
-        ss << members.size();
-        client.sendResponse(":server 315 " + client.getNickname() + " " + target + 
-                          " :End of WHO list (" + ss.str() + " members)");
-    }
-    else
-    {
-        client.sendResponse(":server 403 " + client.getNickname() + " " + target + " :No such channel");
-    }
 }

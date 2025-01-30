@@ -241,14 +241,15 @@ void Server::delete_channel(const std::string& channelName)
 
 std::vector<Channel *> Server::getChannelsForClient(const Client* client) const
 {
-	std::vector<Channel *> clientChannels;
-	for (std::map<std::string, Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it)
-	{
-		const std::vector<Client *> &members = it->second->getMembers();
-		if (std::find(members.begin(), members.end(), client) != members.end())
-		{
-			clientChannels.push_back(it->second);
-		}
-	}
-	return clientChannels;
+    std::vector<Channel *> clientChannels;
+    // Parcourt tous les canaux pour trouver ceux où le client est membre
+    for (std::map<std::string, Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+    {
+        const std::vector<Client *> &members = it->second->getMembers();
+        if (std::find(members.begin(), members.end(), client) != members.end())
+        {
+            clientChannels.push_back(it->second);
+        }
+    }
+    return clientChannels;
 }

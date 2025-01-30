@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:57:59 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/29 15:29:56 by anferre          ###   ########.fr       */
+/*   Updated: 2025/01/30 14:32:08 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <map>
 #include <set>
 #include "Client.hpp"
+#include <ctime>
 
 class Client;
 
@@ -34,6 +35,7 @@ private:
     std::map<Client*, bool> operators;	// List of operators
 	std::set<Client *> inviteList;
     std::vector<Client*> members;
+    time_t lastModified;  // Timestamp de la dernière modification
 
 public:
     Channel();
@@ -77,6 +79,10 @@ public:
 	void setUserLimit(int limit);
 	int getUserLimit() const;
 	bool isFull() const;
+
+    // cache methods
+    time_t getLastModified() const { return lastModified; }
+    void updateLastModified() { lastModified = time(NULL); }
 };
 
 #endif

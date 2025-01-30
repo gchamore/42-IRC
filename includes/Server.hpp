@@ -31,7 +31,7 @@ private:
 	std::string server_password;
 	std::vector<pollfd> poll_fds;
 	std::map<int, Client *> clients;
-	std::map<std::string, Channel *> channels;
+	std::map<std::string, Channel *> channels;  // Stockage de tous les canaux
 
 	void setup_server();
 	void accept_new_client();
