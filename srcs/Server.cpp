@@ -1,12 +1,6 @@
 #include "../includes/Server.hpp"
 
-// Suppression des définitions de constantes qui ne sont plus utilisées
-// const char* const Server::RPL_WELCOME = "001";
-// const char* const Server::ERR_NONICKNAMEGIVEN = "431";
-// const char* const Server::ERR_ERRONEUSNICKNAME = "432";
-// const char* const Server::ERR_NICKNAMEINUSE = "433";
-
-void handleCommand(const CommandParser::ParsedCommand &command, Client &client, const std::string &server_password);
+// void handleCommand(const CommandParser::ParsedCommand &command, Client &client, const std::string &server_password);
 
 Server::Server(int port, const std::string &password) : port(port), server_password(password)
 {

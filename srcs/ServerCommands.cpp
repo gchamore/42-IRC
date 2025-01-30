@@ -40,9 +40,7 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
             std::cout << "User after: " << client.getUsername() << std::endl;
         }
         else
-        {
             client.sendResponse("451 :You have not registered");
-        }
     }
     else if (client.getState() == Client::REGISTERED)
     {
@@ -55,21 +53,13 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
         else if (command.command == "WHO")
             handleWhoCommand(command, client);
         else if (command.command == "PRIVMSG")
-        {
             handlePrivmsgCommand(command, client);
-        }
         else if (command.command == "PART")
-        {
             handlePartCommand(command, client);
-        }
         else if (command.command == "QUIT")
-        {
             handleQuitCommand(command, client);
-        }
         else
-        {
             client.sendResponse(":server 421 * " + command.command + " :Unknown command");
-        }
     }
 }
 
