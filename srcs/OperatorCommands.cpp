@@ -159,23 +159,37 @@ void Server::handleTopicCommand(Client &client, const CommandParser::ParsedComma
 
 void Server::handleModeCommand(Client &client, const CommandParser::ParsedCommand &command)
 {
-	if (command.params.size() < 2)
+	if (command.params.empty())
 	{
-		client.sendResponse("461 MODE :Not enough parameters");
+		client.sendResponse(":server 461 " + client.getNickname() + " MODE :Not enough parameters");
 		return;
 	}
 
 	std::string channelName = command.params[0];
-	std::string modeChange = command.params[1];
 
 	if (channels.find(channelName) == channels.end())
 	{
-		client.sendResponse("403 " + channelName + " :No such channel");
+		client.sendResponse(":server 403 " + client.getNickname() + " " + channelName + " :No such channel");
 		return;
 	}
 
 	Channel *channel = channels[channelName];
 
+	if (command.params.size() == 1)
+	{
+		std::string modes = "+nt"; // Default modes: No external messages & topic restricted
+		if (channel->isInviteOnly())
+			modes += "i";
+		if (channel->hasPassword())
+			modes += "k";
+		if (channel->getUserLimit() > 0)
+			modes += "l";
+
+		client.sendResponse(":server 324 " + client.getNickname() + " " + channelName + " " + modes);
+		return;
+	}
+
+	std::string modeChange = command.params[1];
 	if (!channel->isOperator(&client))
 	{
 		client.sendResponse("482 " + channelName + " :You're not a channel operator");
@@ -267,4 +281,5 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 	}
 	std::string notification = ":" + client.getNickname() + " MODE " + channelName + " " + modeChange;
 	this->broadcast_message(channelName, notification);
+	client.sendResponse(":server 324 " + client.getNickname() + " " + channelName + " " + modeChange);
 }

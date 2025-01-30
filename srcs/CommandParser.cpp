@@ -62,7 +62,7 @@ bool CommandParser::isValidCommand(const std::string &cmd)
     {
         "NICK", "USER", "JOIN", "PRIVMSG", "PART", "QUIT",
         "PASS", "CAP", "MODE", "WHO", "LIST",
-        "TOPIC", "NAMES", "KICK"
+        "TOPIC", "NAMES", "KICK", "INVITE"
     };
 
     // Check if command is in the list
