@@ -69,7 +69,7 @@ void Server::setup_server()
 	pollfd server_poll_fd = {server_fd, POLLIN, 0};
 	poll_fds.push_back(server_poll_fd);
 
-	std::cout << "Server setup complete. Listening on port " << port << std::endl;
+	std::cout << "Server setup complete.\nWaiting for connections on port " << port << "..." << std::endl;
 }
 
 void Server::start()
@@ -132,7 +132,8 @@ void Server::accept_new_client()
 			":server NOTICE Auth :*** 3. USER <username> <hostname> <servername> :<realname> - All fields required\r\n";
 		clients[client_fd]->sendResponse(welcome_message);
 
-		std::cout << "New client connected: " << client_fd << std::endl;
+		// Utiliser getId() au lieu du fd pour le logging
+		std::cout << "New client connected: " << clients[client_fd]->getId() << std::endl;
 	}
 }
 
@@ -166,7 +167,8 @@ void Server::handle_client_data(int client_fd)
 				// Process complete commands ending with '\n'
 				for (std::vector<CommandParser::ParsedCommand>::const_iterator it = parsed_commands.begin(); it != parsed_commands.end(); ++it)
 				{
-					std::cout << "Command from client " << client_fd << ": " << it->command << std::endl;
+					if (DEBUG_MODE)
+						std::cout << "Command from client " << clients[client_fd]->getId() << ": " << it->command << std::endl;
 					this->handleCommand(*it, *clients[client_fd]);
 				}
 			}
@@ -241,14 +243,15 @@ void Server::delete_channel(const std::string& channelName)
 
 std::vector<Channel *> Server::getChannelsForClient(const Client* client) const
 {
-	std::vector<Channel *> clientChannels;
-	for (std::map<std::string, Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it)
-	{
-		const std::vector<Client *> &members = it->second->getMembers();
-		if (std::find(members.begin(), members.end(), client) != members.end())
-		{
-			clientChannels.push_back(it->second);
-		}
-	}
-	return clientChannels;
+    std::vector<Channel *> clientChannels;
+    // Parcourt tous les canaux pour trouver ceux où le client est membre
+    for (std::map<std::string, Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+    {
+        const std::vector<Client *> &members = it->second->getMembers();
+        if (std::find(members.begin(), members.end(), client) != members.end())
+        {
+            clientChannels.push_back(it->second);
+        }
+    }
+    return clientChannels;
 }

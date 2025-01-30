@@ -1,6 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include "../includes/Debug.hpp"
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -31,7 +32,7 @@ private:
 	std::string server_password;
 	std::vector<pollfd> poll_fds;
 	std::map<int, Client *> clients;
-	std::map<std::string, Channel *> channels;
+	std::map<std::string, Channel *> channels;  // Stockage de tous les canaux
 
 	void setup_server();
 	void accept_new_client();

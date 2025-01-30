@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/01/30 14:16:08 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 16:18:35 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,21 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
     {
         if (command.command == "CAP")
         {
-            std::cout << "CAP command received" << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "CAP command received" << std::endl;
             client.sendResponse("CAP * LS :multi-prefix sasl");  // Standard CAP LS response
-            std::cout << "CAP LS sent" << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "CAP LS sent" << std::endl;
             return;
         }
         if (command.command == "PASS")
         {
-            std::cout << "is Authenticated: " << client.authenticated() << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "is Authenticated: " << client.authenticated() << std::endl;
             handlePassCommand(command, client);
             std::cout << "Pass command received: " << command.params[0] << std::endl;
-            std::cout << "is Authenticated: " << client.authenticated() << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "is Authenticated: " << client.authenticated() << std::endl;
         }
         return;  // Silently ignore other commands until authenticated
     }
@@ -53,17 +57,21 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
     {
         if (command.command == "NICK")
         {
-            std::cout << "Nick before: " << client.getNickname() << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "Nick before: " << client.getNickname() << std::endl;
             handleNickCommand(command, client);
             std::cout << "Nick command received:" << command.params[0] << std::endl;
-            std::cout << "Nick after: " << client.getNickname() << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "Nick after: " << client.getNickname() << std::endl;
         }
         else if (command.command == "USER")
         {
-            std::cout << "User before: " << client.getUsername() << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "User before: " << client.getUsername() << std::endl;
             handleUserCommand(command, client);
             std::cout << "User command received:" << command.params[0] << std::endl;
-            std::cout << "User after: " << client.getUsername() << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "User after: " << client.getUsername() << std::endl;
         }
         else
             client.sendResponse("451 :You have not registered");
@@ -75,29 +83,25 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
         else if (command.command == "JOIN")
             handleJoinCommand(command, client);
         else if (command.command == "WHO")
+        {
+            if (DEBUG_MODE)
+                std::cout << "WHO command received with params: " << (command.params.empty() ? "none" : command.params[0]) << std::endl;
             handleWhoCommand(command, client);
+        }
         else if (command.command == "PRIVMSG")
             handlePrivmsgCommand(command, client);
         else if (command.command == "PART")
             handlePartCommand(command, client);
         else if (command.command == "QUIT")
             handleQuitCommand(command, client);
-		else if (command.command == "MODE")
-		{
-			handleModeCommand(client, command);
-		}
-		else if (command.command == "KICK")
-		{
-			handleKickCommand(client, command);
-		}
-		else if (command.command == "INVITE")
-		{
-			handleInviteCommand(client, command);
-		}
-		else if (command.command == "TOPIC")
-		{
-			handleTopicCommand(client, command);
-		}
+        else if (command.command == "MODE")
+            handleModeCommand(client, command);
+        else if (command.command == "KICK")
+            handleKickCommand(client, command);
+        else if (command.command == "INVITE")
+            handleInviteCommand(client, command);
+        else if (command.command == "TOPIC")
+            handleTopicCommand(client, command);
         else
             client.sendResponse(":server 421 * " + command.command + " :Unknown command");
     }
@@ -173,7 +177,6 @@ void Server::handleNickCommand(const CommandParser::ParsedCommand &command, Clie
         }
         
         std::string nick = command.params[0];
-        std::cout << "Attempting to set nickname: '" << nick << "'" << std::endl;
         
         if (!this->isValidNickname(nick))
         {
@@ -198,28 +201,30 @@ void Server::handleNickCommand(const CommandParser::ParsedCommand &command, Clie
             // Vérifier que le nouveau nickname avec suffixe est toujours valide
             if (nick.length() > 9)
             {
-                client.sendResponse(":server 433 * " + originalNick + 
-                                  " :Nickname is already in use and alternative too long. Please choose another");
+                client.sendResponse(":server 433 * " + originalNick +
+                                    " :Nickname is already in use and alternative too long. Please choose another");
                 return;
             }
-	if (!client.getNickname().empty())
-	{ 
-		std::string notification = ":" + client.getNickname() + " changed NICK for :" + command.params[0];
-	}        }
-
+            if (!client.getNickname().empty())
+            {
+                std::string notification = ":" + client.getNickname() + " changed NICK for :" + command.params[0];
+            }
+        }
         std::string oldNick = client.getNickname().empty() ? "*" : client.getNickname();
         client.setNickname(nick);
-        
-        if (oldNick == "*") {
-            client.sendResponse(":server NOTICE Auth :Nickname set to " + nick + 
+
+        if (oldNick == "*")
+        {
+            client.sendResponse(":server NOTICE Auth :Nickname successfully set to " + nick + 
                               (nick != originalNick ? " (original choice was taken)" : ""));
-        } else {
+        }
+        else
+        {
             client.sendResponse(":" + oldNick + " NICK :" + nick);
         }
-        
-        std::cout << "Nickname set to: '" << nick << "'" << std::endl;
     } 
-    catch (const std::exception& e) {
+    catch (const std::exception& e)
+    {
         std::cerr << "Error in handleNickCommand: " << e.what() << std::endl;
         client.sendResponse(":server 432 * :Error setting nickname: " + std::string(e.what()));
     }
@@ -499,51 +504,4 @@ void Server::handleQuitCommand(const CommandParser::ParsedCommand &command, Clie
 	}
 	std::cout << client.getNickname() << " has quit the server.\n";
 	this->remove_client(client.getFD());
-}
-
-void Server::handleWhoCommand(const CommandParser::ParsedCommand &command, Client &client)
-{
-	if (command.params.empty())
-	{
-		client.sendResponse(":server 461 " + client.getNickname() + " WHO :Not enough parameters");
-		return;
-	}
-
-	std::string target = command.params[0];
-	std::cout << "WHO request for target: " << target << std::endl;
-
-	if (channels.find(target) != channels.end())
-	{
-		Channel *channel = channels[target];
-		const std::vector<Client *> &members = channel->getMembers();
-
-		// Envoyer d'abord les informations du canal
-		// client.sendResponse(":server 324 " + client.getNickname() + " " + target + " Channel members:");
-
-		for (std::vector<Client *>::const_iterator it = members.begin(); it != members.end(); ++it)
-		{
-            Client *member = *it;
-			std::string prefix = channel->isOperator(*it) ? "@" : "";
-			std::string roleSymbol = channel->isOperator(*it) ? "channel operator" : "member";
-
-			// Format: "<channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>"
-			client.sendResponse(":server 352 " + client.getNickname() + " " + target +
-								" " + member->getUsername() + // username
-								" " + target +				 // host
-								" irc.server" +				 // server
-								" " + member->getNickname() + // nickname
-								" H" + prefix +				 // Here + operator status
-								" :0 " + roleSymbol);		 // hopcount + role
-		}
-
-		// Message de fin avec un résumé
-		std::stringstream ss;
-		ss << members.size();
-		client.sendResponse(":server 315 " + client.getNickname() + " " + target +
-							" :End of WHO list (" + ss.str() + " members)");
-	}
-	else
-	{
-		client.sendResponse(":server 403 " + client.getNickname() + " " + target + " :No such channel");
-	}
 }
