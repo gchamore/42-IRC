@@ -69,7 +69,7 @@ void Server::setup_server()
 	pollfd server_poll_fd = {server_fd, POLLIN, 0};
 	poll_fds.push_back(server_poll_fd);
 
-	std::cout << "Server setup complete. Listening on port " << port << std::endl;
+	std::cout << "Server setup complete.\nWaiting for connections on port " << port << "..." << std::endl;
 }
 
 void Server::start()

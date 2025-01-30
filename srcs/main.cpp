@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:23 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/29 11:36:14 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 16:36:32 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,6 @@ int main(int argc, char **argv)
 	std::string portArg = argv[1];
 	std::string server_password = argv[2];
 
-	// Add debug log for server password
-	std::cout << "Server starting with password: '" << server_password << "'" << std::endl;
-
 	std::stringstream ss(portArg);
 	int port;
 	if (!(ss >> port))
@@ -56,6 +53,13 @@ int main(int argc, char **argv)
 		std::cerr << "Invalid port number: " << portArg << std::endl;
 		return 1;
 	}
+	
+	std::cout << "\033[1;5;32m\n███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ \n";
+	std::cout << "██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗\n";
+	std::cout << "███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝\n";
+	std::cout << "╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗\n";
+	std::cout << "███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║\n";
+	std::cout << "╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝\n\n\033[0m";
 
 	std::cout << "Starting server on port " << port << " with password " << server_password << std::endl;
 

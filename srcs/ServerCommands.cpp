@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/01/30 15:48:39 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 16:18:35 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,11 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
         else if (command.command == "JOIN")
             handleJoinCommand(command, client);
         else if (command.command == "WHO")
+        {
+            if (DEBUG_MODE)
+                std::cout << "WHO command received with params: " << (command.params.empty() ? "none" : command.params[0]) << std::endl;
             handleWhoCommand(command, client);
+        }
         else if (command.command == "PRIVMSG")
             handlePrivmsgCommand(command, client);
         else if (command.command == "PART")
