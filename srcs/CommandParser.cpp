@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:18 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/30 16:01:50 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 16:05:10 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,13 @@ std::vector<CommandParser::ParsedCommand> CommandParser::parse(const std::string
     if (spacePos == std::string::npos)
         spacePos = cmdLine.length();
     command.command = cmdLine.substr(pos, spacePos - pos);
+    
+    // Convertir la commande en majuscules
+    for (size_t i = 0; i < command.command.length(); ++i)
+    {
+        command.command[i] = std::toupper(command.command[i]);
+    }
+
     if (!isValidCommand(command.command))
         throw ParseError("Invalid command format");
 
