@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 13:12:16 by anferre           #+#    #+#             */
-/*   Updated: 2025/01/30 14:35:20 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 15:05:31 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,14 +159,36 @@ void Server::handleTopicCommand(Client &client, const CommandParser::ParsedComma
 
 void Server::handleModeCommand(Client &client, const CommandParser::ParsedCommand &command)
 {
-	if (command.params.size() < 2)
-	{
-		client.sendResponse("461 MODE :Not enough parameters");
-		return;
-	}
+    if (command.params.empty())
+    {
+        client.sendResponse("461 MODE :Not enough parameters");
+        return;
+    }
 
-	std::string channelName = command.params[0];
-	std::string modeChange = command.params[1];
+    std::string channelName = command.params[0];
+
+    if (command.params.size() == 1)
+    {
+        if (channels.find(channelName) != channels.end())
+        {
+            Channel *channel = channels[channelName];
+            std::string modes = "+";
+            if (channel->isInviteOnly()) modes += "i";
+            if (channel->isTopicRestricted()) modes += "t";
+            if (channel->hasPassword()) modes += "k";
+            if (channel->getUserLimit() > 0) modes += "l";
+
+            client.sendResponse(":server 324 " + client.getNickname() + " " + channelName + " " + modes);
+            return;
+        }
+        else
+        {
+            client.sendResponse("403 " + channelName + " :No such channel");
+            return;
+        }
+    }
+	
+    std::string modeChange = command.params[1];
 
 	if (channels.find(channelName) == channels.end())
 	{
@@ -271,15 +293,31 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 
 void Server::handleWhoCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
+    // Si pas de paramètre, lister tous les utilisateurs visibles
     if (command.params.empty())
     {
-        client.sendResponse(":server 461 " + client.getNickname() + " WHO :Not enough parameters");
+        // Parcourir tous les clients connectés
+        for (std::map<int, Client *>::const_iterator it = clients.begin(); it != clients.end(); ++it)
+        {
+            Client *target = it->second;
+            if (target->getState() == Client::REGISTERED)  // Ne lister que les utilisateurs enregistrés
+            {
+                // Format: "<client> <user> <host> <server> <nick> <H|G> :<hopcount> <real name>"
+                client.sendResponse(":server 352 " + client.getNickname() + " * " +
+                                target->getUsername() +     // username
+                                " " + "localhost" +         // host
+                                " irc.server" +            // server
+                                " " + target->getNickname() + // nickname
+                                " H" +                      // Here (H) or Gone (G)
+                                " :0 " + target->getUsername()); // hopcount et realname
+            }
+        }
+        client.sendResponse(":server 315 " + client.getNickname() + " * :End of WHO list");
         return;
     }
 
+    // Le reste du code pour la commande WHO avec paramètre
     std::string target = command.params[0];
-    std::cout << "WHO request for target: " << target << std::endl;
-
     if (channels.find(target) != channels.end())
     {
         Channel *channel = channels[target];

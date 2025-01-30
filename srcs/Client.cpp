@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:21 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/30 12:35:54 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 15:12:03 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,16 @@
 #include <vector>
 #include <unistd.h>
 
+// Initialiser le compteur statique
+size_t Client::userCount = 0;
+
 Client::Client(int socket_fd) : fd(socket_fd), isAuthenticated(false), state(REGISTERING)
 {
-	if (socket_fd < 0)
-	{
-		throw std::invalid_argument("Socket file descriptor cannot be negative");
-	}
+    if (socket_fd < 0)
+    {
+        throw std::invalid_argument("Socket file descriptor cannot be negative");
+    }
+    userId = ++userCount;  // Assigner un ID séquentiel commençant à 1
 }
 
 int Client::getFD() const

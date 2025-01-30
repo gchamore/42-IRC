@@ -132,7 +132,8 @@ void Server::accept_new_client()
 			":server NOTICE Auth :*** 3. USER <username> <hostname> <servername> :<realname> - All fields required\r\n";
 		clients[client_fd]->sendResponse(welcome_message);
 
-		std::cout << "New client connected: " << client_fd << std::endl;
+		// Utiliser getId() au lieu du fd pour le logging
+		std::cout << "New client connected: " << clients[client_fd]->getId() << std::endl;
 	}
 }
 
@@ -166,7 +167,8 @@ void Server::handle_client_data(int client_fd)
 				// Process complete commands ending with '\n'
 				for (std::vector<CommandParser::ParsedCommand>::const_iterator it = parsed_commands.begin(); it != parsed_commands.end(); ++it)
 				{
-					std::cout << "Command from client " << client_fd << ": " << it->command << std::endl;
+					if (DEBUG_MODE)
+						std::cout << "Command from client " << clients[client_fd]->getId() << ": " << it->command << std::endl;
 					this->handleCommand(*it, *clients[client_fd]);
 				}
 			}

@@ -6,13 +6,14 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:57:55 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/24 13:48:39 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 15:30:39 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef COMMAND_PARSER_HPP
 #define COMMAND_PARSER_HPP
 
+#include "../includes/Debug.hpp"
 #include <string>
 #include <vector>
 #include <stdexcept>

@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/01/30 14:35:14 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 15:37:47 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,21 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
     {
         if (command.command == "CAP")
         {
-            std::cout << "CAP command received" << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "CAP command received" << std::endl;
             client.sendResponse("CAP * LS :multi-prefix sasl");  // Standard CAP LS response
-            std::cout << "CAP LS sent" << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "CAP LS sent" << std::endl;
             return;
         }
         if (command.command == "PASS")
         {
-            std::cout << "is Authenticated: " << client.authenticated() << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "is Authenticated: " << client.authenticated() << std::endl;
             handlePassCommand(command, client);
             std::cout << "Pass command received: " << command.params[0] << std::endl;
-            std::cout << "is Authenticated: " << client.authenticated() << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "is Authenticated: " << client.authenticated() << std::endl;
         }
         return;  // Silently ignore other commands until authenticated
     }
@@ -53,17 +57,21 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
     {
         if (command.command == "NICK")
         {
-            std::cout << "Nick before: " << client.getNickname() << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "Nick before: " << client.getNickname() << std::endl;
             handleNickCommand(command, client);
             std::cout << "Nick command received:" << command.params[0] << std::endl;
-            std::cout << "Nick after: " << client.getNickname() << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "Nick after: " << client.getNickname() << std::endl;
         }
         else if (command.command == "USER")
         {
-            std::cout << "User before: " << client.getUsername() << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "User before: " << client.getUsername() << std::endl;
             handleUserCommand(command, client);
             std::cout << "User command received:" << command.params[0] << std::endl;
-            std::cout << "User after: " << client.getUsername() << std::endl;
+            if (DEBUG_MODE)
+                std::cout << "User after: " << client.getUsername() << std::endl;
         }
         else
             client.sendResponse("451 :You have not registered");
@@ -83,21 +91,13 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
         else if (command.command == "QUIT")
             handleQuitCommand(command, client);
 		else if (command.command == "MODE")
-		{
 			handleModeCommand(client, command);
-		}
 		else if (command.command == "KICK")
-		{
 			handleKickCommand(client, command);
-		}
 		else if (command.command == "INVITE")
-		{
 			handleInviteCommand(client, command);
-		}
 		else if (command.command == "TOPIC")
-		{
 			handleTopicCommand(client, command);
-		}
         else
             client.sendResponse(":server 421 * " + command.command + " :Unknown command");
     }
@@ -173,7 +173,6 @@ void Server::handleNickCommand(const CommandParser::ParsedCommand &command, Clie
         }
         
         std::string nick = command.params[0];
-        std::cout << "Attempting to set nickname: '" << nick << "'" << std::endl;
         
         if (!this->isValidNickname(nick))
         {
@@ -198,28 +197,30 @@ void Server::handleNickCommand(const CommandParser::ParsedCommand &command, Clie
             // Vérifier que le nouveau nickname avec suffixe est toujours valide
             if (nick.length() > 9)
             {
-                client.sendResponse(":server 433 * " + originalNick + 
-                                  " :Nickname is already in use and alternative too long. Please choose another");
+                client.sendResponse(":server 433 * " + originalNick +
+                                    " :Nickname is already in use and alternative too long. Please choose another");
                 return;
             }
-	if (!client.getNickname().empty())
-	{ 
-		std::string notification = ":" + client.getNickname() + " changed NICK for :" + command.params[0];
-	}        }
-
+            if (!client.getNickname().empty())
+            {
+                std::string notification = ":" + client.getNickname() + " changed NICK for :" + command.params[0];
+            }
+        }
         std::string oldNick = client.getNickname().empty() ? "*" : client.getNickname();
         client.setNickname(nick);
-        
-        if (oldNick == "*") {
-            client.sendResponse(":server NOTICE Auth :Nickname set to " + nick + 
+
+        if (oldNick == "*")
+        {
+            client.sendResponse(":server NOTICE Auth :Nickname successfully set to " + nick + 
                               (nick != originalNick ? " (original choice was taken)" : ""));
-        } else {
+        }
+        else
+        {
             client.sendResponse(":" + oldNick + " NICK :" + nick);
         }
-        
-        std::cout << "Nickname set to: '" << nick << "'" << std::endl;
     } 
-    catch (const std::exception& e) {
+    catch (const std::exception& e)
+    {
         std::cerr << "Error in handleNickCommand: " << e.what() << std::endl;
         client.sendResponse(":server 432 * :Error setting nickname: " + std::string(e.what()));
     }

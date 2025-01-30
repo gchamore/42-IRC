@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:01 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/23 16:19:51 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 15:31:02 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,6 @@ public:
 		REGISTERING,
 		REGISTERED,
 	};
-
-private:
-	int fd;               // Descripteur de fichier / (socket)
-	std::string nickname; // Pseudo de l'utilisateur
-	std::string username; // Nom d'utilisateur
-	bool isAuthenticated; // Indique si le client est authentifié ou non
-	std::string buffer;   // Buffer de réception
-	ClientState state;    // État du client
-
-public:
 	Client(int socket_fd);
 	int getFD() const;
 	const std::string &getNickname() const;
@@ -55,6 +45,18 @@ public:
 	std::string popCommand();
 	void sendResponse(const std::string &response);
 	std::vector<Channel *> getChannels(const Server& server) const;
+	size_t getId() const { return userId; }
+	static void resetUserCount() { userCount = 0; }  // Pour réinitialiser si nécessaire
+
+private:
+	int fd;               // Descripteur de fichier / (socket)
+	std::string nickname; // Pseudo de l'utilisateur
+	std::string username; // Nom d'utilisateur
+	bool isAuthenticated; // Indique si le client est authentifié ou non
+	std::string buffer;   // Buffer de réception
+	ClientState state;    // État du client
+	static size_t userCount;  // Compteur statique pour tous les clients
+	size_t userId;           // ID unique pour chaque client
 };
 
 #endif
