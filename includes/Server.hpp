@@ -50,13 +50,12 @@ private:
 	void handleUserCommand(const CommandParser::ParsedCommand &command, Client &client);
 	bool isValidUsername(const std::string &username);
 	void handleJoinCommand(const CommandParser::ParsedCommand &command, Client &client);
-	bool isValidChannelName(const std::string &channelName) const	
+	bool isValidChannelName(const std::string &channelName) const;  // Ajout du point-virgule
 	void handlePrivmsgCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handlePartCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handleQuitCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handleModeCommand(Client &client, const CommandParser::ParsedCommand &command);
 	void handleWhoCommand(const CommandParser::ParsedCommand &command, Client &client);
-	bool isValidChannelName(const std::string &channelName) const;
 
 	//operatorCommands 
 	Client *getClientByNickname(const std::string &nickname);
