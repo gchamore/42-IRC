@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:01 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/30 15:31:02 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 16:39:54 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ public:
 	void sendResponse(const std::string &response);
 	std::vector<Channel *> getChannels(const Server& server) const;
 	size_t getId() const { return userId; }
-	static void resetUserCount() { userCount = 0; }  // Pour réinitialiser si nécessaire
+	// static void resetUserCount() { userCount = 0; }
 
 private:
 	int fd;               // Descripteur de fichier / (socket)
