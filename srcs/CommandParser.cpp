@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:18 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/30 15:41:22 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 16:01:50 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,7 @@ std::vector<CommandParser::ParsedCommand> CommandParser::parse(const std::string
             else
                 std::cout << rawMessage[i];
         }
+        std::cout << "'" << std::endl;
     }
 
     // Enlever le \r\n pour le parsing

@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/01/30 15:37:47 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/01/30 15:48:39 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,14 +90,14 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
             handlePartCommand(command, client);
         else if (command.command == "QUIT")
             handleQuitCommand(command, client);
-		else if (command.command == "MODE")
-			handleModeCommand(client, command);
-		else if (command.command == "KICK")
-			handleKickCommand(client, command);
-		else if (command.command == "INVITE")
-			handleInviteCommand(client, command);
-		else if (command.command == "TOPIC")
-			handleTopicCommand(client, command);
+        else if (command.command == "MODE")
+            handleModeCommand(client, command);
+        else if (command.command == "KICK")
+            handleKickCommand(client, command);
+        else if (command.command == "INVITE")
+            handleInviteCommand(client, command);
+        else if (command.command == "TOPIC")
+            handleTopicCommand(client, command);
         else
             client.sendResponse(":server 421 * " + command.command + " :Unknown command");
     }
