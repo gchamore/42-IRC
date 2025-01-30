@@ -59,7 +59,6 @@ private:
 	void handleWhoCommand(const CommandParser::ParsedCommand &command, Client &client);
 
 	//operatorCommands 
-	Client *getClientByNickname(const std::string &nickname);
 	void handleKickCommand(Client &client, const CommandParser::ParsedCommand &command);
 	void handleInviteCommand(Client &client, const CommandParser::ParsedCommand &command);
 	void handleTopicCommand(Client &client, const CommandParser::ParsedCommand &command);
@@ -68,6 +67,7 @@ public:
 	Server(int port, const std::string &password);
 	~Server();
 	void start();
+	Client *getClientByNickname(const std::string &nickname);
 	std::vector<Channel *> getChannelsForClient(const Client *client) const;
 };
 

@@ -157,6 +157,74 @@ void Server::handleTopicCommand(Client &client, const CommandParser::ParsedComma
 	this->broadcast_message(channelName, notification);
 }
 
+static void handleInviteMode(bool adding, Channel *channel)
+{
+	channel->setInviteOnly(adding);
+}
+
+static void handleTopic(bool adding, Channel *channel)
+{
+	channel->setTopicRestricted(adding);
+}
+
+static void handlePasswordMode(bool adding, const CommandParser::ParsedCommand &command, size_t &paramIndex, Client &client, Channel *channel)
+{
+	if (adding)
+	{
+		if (command.params.size() <= paramIndex)
+		{
+			client.sendResponse("461 MODE :Not enough parameters");
+			return;
+		}
+		channel->setPassword(command.params[paramIndex++]);
+	}
+	else
+	{
+		channel->removePassword();
+	}
+}
+
+static void handleOperatorMode(bool adding, const CommandParser::ParsedCommand &command, size_t &paramIndex, Client &client, Channel *channel, const std::string &channelName, Server &server)
+{
+	if (command.params.size() <= paramIndex)
+	{
+		client.sendResponse("461 MODE :Not enough parameters");
+		return;
+	}
+
+	Client *target = server.getClientByNickname(command.params[paramIndex++]);
+	if (!target || !channel->isMember(target))
+	{
+		client.sendResponse("441 " + target->getNickname() + " " + channelName + " :They aren't on that channel");
+		return;
+	}
+
+	if (adding)
+		channel->addOperator(target);
+	else
+		channel->removeOperator(target);
+}
+
+static void handleUserLimitMode(bool adding, const CommandParser::ParsedCommand &command, size_t &paramIndex, Client &client, Channel *channel)
+{
+	if (adding)
+	{
+		if (command.params.size() <= paramIndex)
+		{
+			client.sendResponse("461 MODE :Not enough parameters");
+			return;
+		}
+		std::stringstream ss(command.params[paramIndex++]);
+		int userLimit;
+		ss >> userLimit;
+		channel->setUserLimit(userLimit);
+	}
+	else
+	{
+		channel->setUserLimit(-1);
+	}
+}
+
 void Server::handleModeCommand(Client &client, const CommandParser::ParsedCommand &command)
 {
 	if (command.params.empty())
@@ -165,29 +233,6 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 		return;
 	}
 
-    std::string channelName = command.params[0];
-
-    if (command.params.size() == 1)
-    {
-        if (channels.find(channelName) != channels.end())
-        {
-            Channel *channel = channels[channelName];
-            std::string modes = "+";
-            if (channel->isInviteOnly()) modes += "i";
-            if (channel->isTopicRestricted()) modes += "t";
-            if (channel->hasPassword()) modes += "k";
-            if (channel->getUserLimit() > 0) modes += "l";
-
-            client.sendResponse(":server 324 " + client.getNickname() + " " + channelName + " " + modes);
-            return;
-        }
-        else
-        {
-            client.sendResponse("403 " + channelName + " :No such channel");
-            return;
-        }
-    }
-	
 	std::string channelName = command.params[0];
 
 	if (channels.find(channelName) == channels.end())
@@ -200,7 +245,7 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 
 	if (command.params.size() == 1)
 	{
-		std::string modes = "+nt"; // Default modes: No external messages & topic restricted
+		std::string modes = "+n"; // Default modes: No external messages & topic restricted
 		if (channel->isInviteOnly())
 			modes += "i";
 		if (channel->hasPassword())
@@ -213,6 +258,7 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 	}
 
 	std::string modeChange = command.params[1];
+
 	if (!channel->isOperator(&client))
 	{
 		client.sendResponse("482 " + channelName + " :You're not a channel operator");
@@ -240,126 +286,25 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 		switch (mode)
 		{
 		case 'i':
-			channel->setInviteOnly(adding);
+			handleInviteMode(adding, channel);
 			break;
 		case 't':
-			channel->setTopicRestricted(adding);
+			handleTopic(adding, channel);
 			break;
 		case 'k':
-			if (adding)
-			{
-				if (command.params.size() <= paramIndex)
-				{
-					client.sendResponse("461 MODE :Not enough parameters");
-					return;
-				}
-				channel->setPassword(command.params[paramIndex]);
-				paramIndex++;
-			}
-			else
-			{
-				channel->removePassword();
-			}
+			handlePasswordMode(adding, command, paramIndex, client, channel);
 			break;
 		case 'o':
-			if (command.params.size() <= paramIndex)
-			{
-				client.sendResponse("461 MODE :Not enough parameters");
-				return;
-			}
-			target = this->getClientByNickname(command.params[paramIndex]);
-			paramIndex++;
-			if (!target || !channel->isMember(target))
-			{
-				client.sendResponse("441 " + target->getNickname() + " " + channelName + " :They aren't on that channel");
-				return;
-			}
-			if (adding)
-				channel->addOperator(target);
-			else
-				channel->removeOperator(target);
+			handleOperatorMode(adding, command, paramIndex, client, channel, channelName, *this);
 			break;
 		case 'l':
-			if (adding)
-			{
-				if (command.params.size() <= paramIndex)
-				{
-					client.sendResponse("461 MODE :Not enough parameters");
-					return;
-				}
-				std::stringstream ss(command.params[paramIndex]);
-				int userLimit;
-				ss >> userLimit;
-				channel->setUserLimit(userLimit);
-			}
-			else
-			{
-				channel->setUserLimit(-1);
-			}
+			handleUserLimitMode(adding, command, paramIndex, client, channel);
 			break;
 		default:
 			client.sendResponse("501 MODE :Unknown MODE flag");
-			return;
 		}
+		std::string notification = ":" + client.getNickname() + " MODE " + channelName + " " + modeChange;
+		this->broadcast_message(channelName, notification);
+		client.sendResponse(":server 324 " + client.getNickname() + " " + channelName + " " + modeChange);
 	}
-	std::string notification = ":" + client.getNickname() + " MODE " + channelName + " " + modeChange;
-	this->broadcast_message(channelName, notification);
-	client.sendResponse(":server 324 " + client.getNickname() + " " + channelName + " " + modeChange);
-}
-
-void Server::handleWhoCommand(const CommandParser::ParsedCommand &command, Client &client)
-{
-    // Si pas de paramètre, lister tous les utilisateurs visibles
-    if (command.params.empty())
-    {
-        // Parcourir tous les clients connectés
-        for (std::map<int, Client *>::const_iterator it = clients.begin(); it != clients.end(); ++it)
-        {
-            Client *target = it->second;
-            if (target->getState() == Client::REGISTERED)  // Ne lister que les utilisateurs enregistrés
-            {
-                // Format: "<client> <user> <host> <server> <nick> <H|G> :<hopcount> <real name>"
-                client.sendResponse(":server 352 " + client.getNickname() + " * " +
-                                target->getUsername() +     // username
-                                " " + "localhost" +         // host
-                                " irc.server" +            // server
-                                " " + target->getNickname() + // nickname
-                                " H" +                      // Here (H) or Gone (G)
-                                " :0 " + target->getUsername()); // hopcount et realname
-            }
-        }
-        client.sendResponse(":server 315 " + client.getNickname() + " * :End of WHO list");
-        return;
-    }
-    else
-    {
-        std::string target = command.params[0];
-        if (channels.find(target) != channels.end())
-        {
-            Channel *channel = channels[target];
-            const std::vector<Client *> &members = channel->getMembers();
-            
-            // Envoyer d'abord les informations du canal
-            for (std::vector<Client *>::const_iterator it = members.begin(); it != members.end(); ++it)
-            {
-                std::string prefix = channel->isOperator(*it) ? "@" : "";
-                
-                // Format : "<channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>"
-                client.sendResponse(":server 352 " + client.getNickname() + " " + target + 
-                                 " " + (*it)->getUsername() +     // username
-                                 " localhost" +                   // host
-                                 " irc.server" +                  // server
-                                 " " + (*it)->getNickname() +     // nickname
-                                 " H" + prefix +                  // Here + operator status
-                                 " :0 " + (*it)->getUsername());  // hopcount + realname
-            }
-
-            // Message de fin
-            client.sendResponse(":server 315 " + client.getNickname() + " " + target + " :End of WHO list");
-        }
-        else
-        {
-            client.sendResponse(":server 403 " + client.getNickname() + " " + target + " :No such channel");
-        }
-    }
 }
