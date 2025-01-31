@@ -59,10 +59,12 @@ void Server::handleKickCommand(Client &client, const CommandParser::ParsedComman
 
 	std::string notification = ":" + client.getNickname() + "!" + client.getUsername() + "@" + "localhost" \
 	+ " KICK " + channelName + " " + nickname + " :" + reason;
-	this->broadcast_message(channelName, notification);
-	target->sendResponse(":" + client.getNickname() + " KICK " + channelName + " " + nickname + " :" + reason);
-
+	this->broadcast_message(channelName, notification, NULL);
 	channel->removeMember(target);
+	if (channel->getMembers().empty())
+	{
+		this->delete_channel(channelName);
+	}
 }
 
 void Server::handleInviteCommand(Client &client, const CommandParser::ParsedCommand &command)
@@ -156,7 +158,7 @@ void Server::handleTopicCommand(Client &client, const CommandParser::ParsedComma
 	channel->setTopic(newTopic);
 
 	std::string notification = ":" + client.getNickname() + " TOPIC " + channelName + " :" + newTopic;
-	this->broadcast_message(channelName, notification);
+	this->broadcast_message(channelName, notification, NULL);
 }
 
 static void handleInviteMode(bool adding, Channel *channel)
@@ -305,7 +307,7 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 			client.sendResponse("501 MODE :Unknown MODE flag");
 		}
 		std::string notification = ":" + client.getNickname() + " MODE " + channelName + " " + modeChange;
-		this->broadcast_message(channelName, notification);
+		this->broadcast_message(channelName, notification, NULL);
 		client.sendResponse(":server 324 " + client.getNickname() + " " + channelName + " " + modeChange);
 	}
 }

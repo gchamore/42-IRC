@@ -74,14 +74,25 @@ void Server::setup_server()
 
 void Server::start()
 {
-	while (true)
+	running = true;
+
+	while (running)
 	{
 		// Wait for activity on any of the sockets
-		int activity = poll(poll_fds.data(), poll_fds.size(), -1);
+		int activity = poll(poll_fds.data(), poll_fds.size(), 500);
 		if (activity < 0)
 		{
+			if (errno == EINTR)
+			{
+				continue;
+			}
 			perror("Poll failed");
 			break;
+		}
+
+		if (activity == 0)
+		{
+			continue;
 		}
 
 		// Handle new connections
@@ -100,6 +111,40 @@ void Server::start()
 			}
 		}
 	}
+}
+
+void Server::stop()
+{
+	running = false;
+
+	for (std::map<int, Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		it->second->sendResponse(":server.com QUIT :Server shutting down");
+	}
+	for (std::map<std::string, Channel *>::iterator it = channels.begin(); it != channels.end(); ++it)
+	{
+		std::vector<Client *> members = it->second->getMembers();
+		for (std::vector<Client *>::iterator it2 = members.begin(); it2 != members.end(); ++it2)
+		{
+			std::string partMsg = ":" + (*it2)->getNickname() + "!" + (*it2)->getUsername() +
+								  "@localhost PART " + it->first + " :Server is shutting down";
+			(*it2)->sendResponse(partMsg);
+		}
+		delete it->second;
+	}
+	for (std::map<int, Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
+	{
+		close(it->first);
+		delete it->second;
+	}
+	clients.clear();
+	for (size_t i = 0; i < poll_fds.size(); ++i)
+	{
+		close(poll_fds[i].fd);
+	}
+	poll_fds.clear();
+	close(server_fd);
+	std::cout << "Server stopped.\n";
 }
 
 void Server::accept_new_client()
@@ -182,6 +227,17 @@ void Server::handle_client_data(int client_fd)
 
 void Server::remove_client(int client_fd)
 {
+	std::cout << "Client disconnected: " << clients[client_fd]->getNickname() << std::endl;
+	std::vector<Channel *> clientChannels = getChannelsForClient(clients[client_fd]);
+	for (std::vector<Channel *>::iterator it = clientChannels.begin(); it != clientChannels.end(); ++it)
+	{
+		(*it)->removeMember(clients[client_fd]);
+		if ((*it)->getMembers().empty())
+		{
+			delete_channel((*it)->getName());
+		}
+	}
+
 	std::cout << "Client disconnected: " << client_fd << std::endl;
 	for (size_t i = 1; i < poll_fds.size(); ++i)
 	{
@@ -196,7 +252,7 @@ void Server::remove_client(int client_fd)
 	clients.erase(client_fd);
 }
 
-void Server::broadcast_message(const std::string &channelName, const std::string &message)
+void Server::broadcast_message(const std::string &channelName, const std::string &message, Client *exclude)
 {
 	if (channels.find(channelName) != channels.end())
 	{
@@ -205,29 +261,15 @@ void Server::broadcast_message(const std::string &channelName, const std::string
 		for (std::vector<Client *>::const_iterator it = members.begin(); it != members.end(); ++it)
 		{
 			Client *member = *it;
-			member->sendResponse(message);
+			if (member != exclude) // Skip the excluded client
+			{
+				member->sendResponse(message);
+			}
 		}
 	}
 }
 
-void Server::broadcast_message(const std::string &channelName, const std::string &message, Client *exclude)
-{
-    if (channels.find(channelName) != channels.end())
-    {
-        Channel *channel = channels[channelName];
-        const std::vector<Client *> &members = channel->getMembers();
-        for (std::vector<Client *>::const_iterator it = members.begin(); it != members.end(); ++it)
-        {
-            Client *member = *it;
-            if (member != exclude)  // Skip the excluded client
-            {
-                member->sendResponse(message);
-            }
-        }
-    }
-}
-
-void Server::delete_channel(const std::string& channelName)
+void Server::delete_channel(const std::string &channelName)
 {
 	if (channels.find(channelName) != channels.end())
 	{
@@ -241,17 +283,17 @@ void Server::delete_channel(const std::string& channelName)
 	}
 }
 
-std::vector<Channel *> Server::getChannelsForClient(const Client* client) const
+std::vector<Channel *> Server::getChannelsForClient(const Client *client) const
 {
-    std::vector<Channel *> clientChannels;
-    // Parcourt tous les canaux pour trouver ceux où le client est membre
-    for (std::map<std::string, Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it)
-    {
-        const std::vector<Client *> &members = it->second->getMembers();
-        if (std::find(members.begin(), members.end(), client) != members.end())
-        {
-            clientChannels.push_back(it->second);
-        }
-    }
-    return clientChannels;
+	std::vector<Channel *> clientChannels;
+	// Parcourt tous les canaux pour trouver ceux où le client est membre
+	for (std::map<std::string, Channel *>::const_iterator it = channels.begin(); it != channels.end(); ++it)
+	{
+		const std::vector<Client *> &members = it->second->getMembers();
+		if (std::find(members.begin(), members.end(), client) != members.end())
+		{
+			clientChannels.push_back(it->second);
+		}
+	}
+	return clientChannels;
 }

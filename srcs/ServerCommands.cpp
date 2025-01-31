@@ -415,7 +415,7 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 
 		// 7. Notifications
 		std::string joinMsg = ":" + client.getNickname() + "!" + client.getUsername() + "@server JOIN " + channelName;
-		broadcast_message(channelName, joinMsg);
+		broadcast_message(channelName, joinMsg, NULL);
 
 		// Topic
 		client.sendResponse(":server 332 " + client.getNickname() + " " + channelName + " :Welcome to " + channelName);
@@ -476,7 +476,7 @@ void Server::handlePrivmsgCommand(const CommandParser::ParsedCommand &command, C
 		}
 
 		std::string msg = ":" + client.getNickname() + "!" + client.getUsername() + "@localhost PRIVMSG " + target + " :" + message;
-		broadcast_message(target, msg);
+		broadcast_message(target, msg, &client);
 	}
 	else
 	{
@@ -503,16 +503,10 @@ void Server::handlePartCommand(const CommandParser::ParsedCommand &command, Clie
 	const std::string reason = (command.params.size() > 1) ? command.params[1] : "Leaving";
 	if (channels.find(channelName) != channels.end())
 	{
-		Client *targetClient = this->getClientByNickname(client.getNickname());
-		if (channels[channelName]->isOperator(targetClient)) {
-        std::string modeMessage = ":server.com MODE " + channelName + " -o " + client.getNickname();
-        this->broadcast_message(channelName, modeMessage);
-        targetClient->sendResponse(modeMessage);
-    }
 		// Annoncer le départ aux autres membres
 		std::string partMsg = ":" + client.getNickname() + "!" + client.getUsername() + \
 		"@localhost PART " + channelName + " :" + reason;
-		broadcast_message(channelName, partMsg);
+		broadcast_message(channelName, partMsg, NULL);
 		client.sendResponse(partMsg);
 		channels[channelName]->removeMember(&client);
 
@@ -532,7 +526,7 @@ void Server::handleQuitCommand(const CommandParser::ParsedCommand &command, Clie
 	const std::vector<Channel *> &clientChannels = client.getChannels(*this);
 	for (std::vector<Channel *>::const_iterator it = clientChannels.begin(); it != clientChannels.end(); ++it)
 	{
-		this->broadcast_message((*it)->getName(), notification);
+		this->broadcast_message((*it)->getName(), notification, &client);
 		(*it)->removeMember(&client);
 		if ((*it)->getMembers().empty())
 		{

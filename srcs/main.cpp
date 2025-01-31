@@ -17,6 +17,19 @@
 #include <iostream>
 #include <sstream>
 #include <map>
+#include <csignal>
+#include <iostream>
+
+Server *globalServer = NULL;
+
+void signalHandler(int signum)
+{
+	if (globalServer)
+	{
+		std::cout << "\nInterrupt signal (" << signum << ") received.\n";
+		globalServer->stop();
+	}
+}
 
 bool isValidPort(const std::string &portArg)
 {
@@ -63,7 +76,9 @@ int main(int argc, char **argv)
 
 	std::cout << "Starting server on port " << port << " with password " << server_password << std::endl;
 
+	signal(SIGINT, signalHandler);
 	Server server(port, server_password);
+	globalServer = &server;
 	server.start();
 
 	return 0;

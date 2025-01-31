@@ -19,7 +19,8 @@
 #include "Channel.hpp"
 #include "CommandParser.hpp"
 #include <sstream>
-#include <ctime>  // Ajout pour time(NULL)
+#include <ctime>
+#include <cerrno>
 
 class Client;
 class Channel;
@@ -29,6 +30,7 @@ class Server
 private:
 	int server_fd;
 	int port;
+	bool running;
 	std::string server_password;
 	std::vector<pollfd> poll_fds;
 	std::map<int, Client *> clients;
@@ -38,7 +40,6 @@ private:
 	void accept_new_client();
 	void handle_client_data(int client_fd);
 	void remove_client(int client_fd);
-	void broadcast_message(const std::string &channelName, const std::string &message);
 	void broadcast_message(const std::string &channelName, const std::string &message, Client *exclude);
 	void delete_channel(const std::string &channelName);
 
@@ -67,6 +68,7 @@ public:
 	Server(int port, const std::string &password);
 	~Server();
 	void start();
+	void stop();
 	Client *getClientByNickname(const std::string &nickname);
 	std::vector<Channel *> getChannelsForClient(const Client *client) const;
 };
