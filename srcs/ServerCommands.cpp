@@ -494,26 +494,42 @@ void Server::handlePrivmsgCommand(const CommandParser::ParsedCommand &command, C
 
 void Server::handlePartCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
-	if (command.params.size() < 1)
+	if (command.params.empty())
 	{
 		client.sendResponse(":server 461 * PART :Not enough parameters");
 		return;
 	}
-	const std::string &channelName = command.params[0];
+	const std::string channelList = command.params[0];
 	const std::string reason = (command.params.size() > 1) ? command.params[1] : "Leaving";
-	if (channels.find(channelName) != channels.end())
-	{
-		// Annoncer le départ aux autres membres
-		std::string partMsg = ":" + client.getNickname() + "!" + client.getUsername() + \
-		"@localhost PART " + channelName + " :" + reason;
-		broadcast_message(channelName, partMsg, NULL);
-		client.sendResponse(partMsg);
-		channels[channelName]->removeMember(&client);
 
-		// Si le canal est vide, le supprimer
-		if (channels[channelName]->getMembers().empty())
+	std::vector<std::string> channelsToPart = split(channelList, ',');
+	for (size_t i = 0; i < channelsToPart.size(); i++)
+	{
+		std::string channelName = channelsToPart[i];
+
+		if (channels.find(channelName) != channels.end())
 		{
-			delete_channel(channelName);
+			if (!channels[channelName]->isMember(&client))
+			{
+				client.sendResponse(":server 442 * " + channelName + " :You're not on that channel");
+				continue;
+			}
+			// Annoncer le départ aux autres membres
+			std::string partMsg = ":" + client.getNickname() + "!" + client.getUsername() +
+								  "@localhost PART " + channelName + " :" + reason;
+			broadcast_message(channelName, partMsg, NULL);
+			client.sendResponse(partMsg);
+			channels[channelName]->removeMember(&client);
+
+			// Si le canal est vide, le supprimer
+			if (channels[channelName]->getMembers().empty())
+			{
+				delete_channel(channelName);
+			}
+		}
+		else
+		{
+			client.sendResponse(":server 403 * " + channelName + " :No such channel");
 		}
 	}
 }
