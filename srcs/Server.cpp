@@ -277,8 +277,8 @@ void Server::delete_channel(const std::string &channelName)
 		if (channel->getMembers().empty())
 		{
 			channels.erase(channelName);
-			delete channel;
 			std::cout << "Channel " << channelName << " deleted.\n";
+			delete channel;
 		}
 	}
 }
