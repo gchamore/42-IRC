@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:21 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/30 15:12:03 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/03 15:03:28 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,9 +142,7 @@ std::string Client::popCommand()
 void Client::sendResponse(const std::string &response)
 {
     if (DEBUG_MODE)
-    {
-        std::cout << "Sending to " << this->nickname << ": " << response << std::endl;
-    }
+        std::cout << "Sending to " << this->nickname << " " << response << std::endl;
     // Forcer CRLF à la fin
     std::string responseWithCRLF = response;
     if (responseWithCRLF.length() < 2 || 

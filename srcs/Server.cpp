@@ -176,9 +176,6 @@ void Server::accept_new_client()
 			":server NOTICE Auth :*** 2. NICK <nickname> (letters, numbers, and -[]`^{})\r\n"
 			":server NOTICE Auth :*** 3. USER <username> <hostname> <servername> :<realname> - All fields required\r\n";
 		clients[client_fd]->sendResponse(welcome_message);
-
-		// Utiliser getId() au lieu du fd pour le logging
-		std::cout << "New client connected: " << clients[client_fd]->getId() << std::endl;
 	}
 }
 
@@ -237,8 +234,6 @@ void Server::remove_client(int client_fd)
 			delete_channel((*it)->getName());
 		}
 	}
-
-	std::cout << "Client disconnected: " << client_fd << std::endl;
 	for (size_t i = 1; i < poll_fds.size(); ++i)
 	{
 		if (poll_fds[i].fd == client_fd)

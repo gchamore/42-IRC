@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 13:08:34 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/03 15:54:26 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,13 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 		{
 			if (command.params.empty())
             {
-				client.sendResponse("461 PASS :Not enough parameters");
+				client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " PASS :Not enough parameters");
 				return;
 			}
 			if (DEBUG_MODE)
 				std::cout << "is Authenticated: " << client.authenticated() << std::endl;
 			handlePassCommand(command, client);
+			std::cout << "User number : " << client.getId() << "\n" << std::endl;
 			std::cout << "Pass command received: " << command.params[0] << std::endl;
 			if (DEBUG_MODE)
 				std::cout << "is Authenticated: " << client.authenticated() << std::endl;
@@ -65,7 +66,7 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 			if (DEBUG_MODE)
 				std::cout << "Nick before: " << client.getNickname() << std::endl;
 			handleNickCommand(command, client);
-			std::cout << "Nick command received:" << command.params[0] << std::endl;
+			std::cout << "Nick command received:" << client.getNickname() << std::endl;
 			if (DEBUG_MODE)
 				std::cout << "Nick after: " << client.getNickname() << std::endl;
 		}
@@ -89,8 +90,7 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 			handleJoinCommand(command, client);
 		else if (command.command == "WHO")
 		{
-			if (DEBUG_MODE)
-				std::cout << "WHO command received with params: " << (command.params.empty() ? "none" : command.params[0]) << std::endl;
+			std::cout << "WHO command received with params: " << (command.params.empty() ? "none" : command.params[0]) << std::endl;
 			handleWhoCommand(command, client);
 		}
 		else if (command.command == "PRIVMSG")
@@ -186,7 +186,7 @@ void Server::handleNickCommand(const CommandParser::ParsedCommand &command, Clie
 
 		if (!this->isValidNickname(nick))
 		{
-			client.sendResponse(":server 432 * :Invalid nickname '" + nick +
+			client.sendResponse(":server " + ServerMessages::ERR_ERRONEUSNICKNAME + " * :Invalid nickname '" + nick +
 								"'. Nickname must start with a letter, be 1-9 chars long, and use only letters, numbers, or -[]`^{}");
 			return;
 		}
@@ -207,7 +207,7 @@ void Server::handleNickCommand(const CommandParser::ParsedCommand &command, Clie
 			// Vérifier que le nouveau nickname avec suffixe est toujours valide
 			if (nick.length() > 9)
 			{
-				client.sendResponse(":server 433 * " + originalNick +
+				client.sendResponse(":server " + ServerMessages::ERR_NICKNAMEINUSE + " * " + originalNick +
 									" :Nickname is already in use and alternative too long. Please choose another");
 				return;
 			}
@@ -259,17 +259,17 @@ void Server::handleUserCommand(const CommandParser::ParsedCommand &command, Clie
 {
 	if (client.getState() != Client::REGISTERING)
 	{
-		client.sendResponse(":server 462 * :You may not reregister");
+		client.sendResponse(":server " + ServerMessages::ERR_ALREADYREGISTERED + " * :You may not reregister");
 		return;
 	}
 	if (!client.authenticated())
 	{
-		client.sendResponse(":server 464 * :You must send PASS first");
+		client.sendResponse(":server " + ServerMessages::ERR_PASSWDMISMATCH + " * :You must send PASS first");
 		return;
 	}
 	if (client.getNickname().empty())
 	{
-		client.sendResponse(":server 431 * :No nickname given");
+		client.sendResponse(":server " + ServerMessages::ERR_NONICKNAMEGIVEN + " * :No nickname given");
 		return;
 	}
 
@@ -277,13 +277,13 @@ void Server::handleUserCommand(const CommandParser::ParsedCommand &command, Clie
 	// USER <username> <hostname> <servername> :<realname>
 	if (command.params.size() < 4)
 	{
-		client.sendResponse(":server 461 * USER :Not enough parameters. Usage: USER <username> <hostname> <servername> :<realname>");
+		client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " * USER :Not enough parameters. Usage: USER <username> <hostname> <servername> :<realname>");
 		return;
 	}
 
 	if (!this->isValidUsername(command.params[0]))
 	{
-		client.sendResponse(":server 432 * :Erroneous username");
+		client.sendResponse(":server " + ServerMessages::ERR_ERRONEUSNICKNAME + " * :Erroneous username");
 		return;
 	}
 
@@ -359,7 +359,7 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 
 	if (!passwords.empty() && channelNames.size() != passwords.size())
 	{
-		client.sendResponse(":server 461 " + client.getNickname() + " JOIN :Mismatched number of channels and passwords");
+		client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " " + client.getNickname() + " JOIN :Mismatched number of channels and passwords");
 		return;
 	}
 
@@ -374,12 +374,12 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 		{
 			if (channelName[0] != '#')
 			{
-				client.sendResponse(":server 403 " + client.getNickname() + " " + channelName +
+				client.sendResponse(":server " + ServerMessages::ERR_NOSUCHCHANNEL + " " + client.getNickname() + " " + channelName +
 									" :No such channel - Channel name must start with '#'");
 			}
 			else
 			{
-				client.sendResponse(":server 403 " + client.getNickname() + " " + channelName +
+				client.sendResponse(":server " + ServerMessages::ERR_NOSUCHCHANNEL + " " + client.getNickname() + " " + channelName +
 									" :Invalid channel name");
 			}
 			continue;
@@ -391,7 +391,7 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 		{
 			channels[channelName] = new Channel(channelName, &client);
 			isNewChannel = true;
-
+			std::cout << "Channel created: " << channelName << std::endl;
 			if (!providedPassword.empty())
 			{
 				channels[channelName]->setPassword(providedPassword);
@@ -405,22 +405,22 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 		{
 			if (channel->isFull())
 			{
-				client.sendResponse(":server 471 " + client.getNickname() + " " + channelName + " :Cannot join channel (+l)");
+				client.sendResponse(":server " + ServerMessages::ERR_CHANNELISFULL + " " + client.getNickname() + " " + channelName + " :Cannot join channel (+l)");
 				continue;
 			}
 			if (channel->hasPassword() && channel->getPassword() != providedPassword)
 			{
-				client.sendResponse(":server 475 " + client.getNickname() + " " + channelName + " :Cannot join channel (+k)");
+				client.sendResponse(":server " + ServerMessages::ERR_BADCHANNELKEY + " " + client.getNickname() + " " + channelName + " :Cannot join channel (+k)");
 				continue;
 			}
 			if (channel->isInviteOnly() && !channel->isInvited(&client))
 			{
-				client.sendResponse(":server 473 " + client.getNickname() + " " + channelName + " :Cannot join channel (+i)");
+				client.sendResponse(":server " + ServerMessages::ERR_INVITEONLYCHAN + " " + client.getNickname() + " " + channelName + " :Cannot join channel (+i)");
 				continue;
 				}
 			if (channel->getMembers().size() >= Constants::MAX_USERS_PER_CHANNEL)
 			{
-				client.sendResponse(":server 471 " + client.getNickname() + " " + channelName + " :Channel is full");
+				client.sendResponse(":server " + ServerMessages::ERR_CHANNELISFULL + " " + client.getNickname() + " " + channelName + " :Channel is full");
 				continue;
 			}
 		}
@@ -434,7 +434,7 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 		broadcast_message(channelName, joinMsg, NULL);
 
 		// Topic
-		client.sendResponse(":server 332 " + client.getNickname() + " " + channelName + " :Welcome to " + channelName);
+		client.sendResponse(":server " + ServerMessages::RPL_TOPIC + " " + client.getNickname() + " " + channelName + " :Welcome to " + channelName);
 
 		// Liste des membres
 		std::string memberList = ":server 353 " + client.getNickname() + " = " + channelName + " :";
@@ -445,8 +445,8 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 				memberList += "@";
 			memberList += (*it)->getNickname() + " ";
 		}
-		client.sendResponse(memberList);
-		client.sendResponse(":server 366 " + client.getNickname() + " " + channelName + " :End of /NAMES list.");
+		client.sendResponse(":server " + ServerMessages::RPL_NAMREPLY + " " + client.getNickname() + " = " + channelName + " :" + memberList);
+		client.sendResponse(":server " + ServerMessages::RPL_ENDOFNAMES + " " + client.getNickname() + " " + channelName + " :End of /NAMES list.");
 
 		// 8. Logging
 		std::cout << "\nChannel " << channelName << " updated:" << std::endl;
@@ -471,13 +471,13 @@ void Server::handlePrivmsgCommand(const CommandParser::ParsedCommand &command, C
 
 	if (target.empty() || message.empty())
 	{
-		client.sendResponse(":server 411 * PRIVMSG :No recipient given");
+		client.sendResponse(":server " + ServerMessages::ERR_NORECIPIENT + " * PRIVMSG :No recipient given");
 		return;
 	}
 
 	// Vérifier la longueur maximale du message (RFC 2812 section 2.3)
 	if (message.length() > 510) { // 512 - 2 (CRLF)
-		client.sendResponse(":server 417 * :Message too long");
+		client.sendResponse(":server " + ServerMessages::ERR_UNKNOWNCOMMAND + " * :Message too long");
 		return;
 	}
 
@@ -600,6 +600,7 @@ void Server::handleWhoCommand(const CommandParser::ParsedCommand &command, Clien
 									" " + target->getNickname() +    // nickname
 									" H" +                           // Here (H) or Gone (G)
 									" :0 " + target->getUsername()); // hopcount et realname
+				std::cout << client.getNickname() << " * " << target->getUsername() << " localhost irc.server " << target->getNickname() << " H :0 " << target->getUsername() << std::endl;
 			}
 		}
 		client.sendResponse(":server " + ServerMessages::RPL_ENDOFWHO + " " + client.getNickname() + " :End of WHO list");
@@ -626,6 +627,7 @@ void Server::handleWhoCommand(const CommandParser::ParsedCommand &command, Clien
 									" " + (*it)->getNickname() +    // nickname
 									" H" + prefix +                 // Here + operator status
 									" :0 " + (*it)->getUsername()); // hopcount + realname
+				std::cout << client.getNickname() << " " << target << " " << (*it)->getUsername() << " localhost irc.server " << (*it)->getNickname() << " H :0 " << (*it)->getUsername() << std::endl;
 			}
 
 			// Message de fin
