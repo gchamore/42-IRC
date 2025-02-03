@@ -21,7 +21,7 @@ void Server::setup_server()
 {
 	sockaddr_in server_address;
 
-	// create the server socket
+	// create the server socket AF_INET for IPv4, SOCK_STREAM for tcp
 	server_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (server_fd == -1)
 	{
@@ -47,6 +47,9 @@ void Server::setup_server()
 	}
 
 	// configure the server address struct
+	//address family: AF_INET for IPv4
+	//INADDR_ANY: listen on all network interfaces
+	//htons: convert port number to network byte order
 	server_address.sin_family = AF_INET;
 	server_address.sin_addr.s_addr = INADDR_ANY;
 	server_address.sin_port = htons(port);

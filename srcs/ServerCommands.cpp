@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerCommands.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 17:10:32 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/03 17:13:50 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 			if (DEBUG_MODE)
 				std::cout << "User before: " << client.getUsername() << std::endl;
 			handleUserCommand(command, client);
-			if (! command.params.empty())
+			if (!command.params.empty())
 				std::cout << "User command received:" << command.params[0] << std::endl;
 			if (DEBUG_MODE)
 				std::cout << "User after: " << client.getUsername() << std::endl;
