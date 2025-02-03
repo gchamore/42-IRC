@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   OperatorCommands.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 13:12:16 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 16:01:52 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/03 17:48:35 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void Server::handleKickCommand(Client &client, const CommandParser::ParsedComman
 	std::string channelName = command.params[0];
 	std::string nickname = command.params[1];
 	std::string reason = (command.params.size() > 2) ? command.params[2] : "Kicked";
+	std::cout << "KICK command received: " << command.params[1] << "leaved" << command.params[0] << std::endl;
 
 	if (channels.find(channelName) == channels.end())
 	{
@@ -76,6 +77,7 @@ void Server::handleInviteCommand(Client &client, const CommandParser::ParsedComm
 
 	std::string nickname = command.params[0];
 	std::string channelName = command.params[1];
+	std::cout << "INVITE command received: " << command.params[0] << " invited on " << command.params[1] << std::endl;
 
 	if (channels.find(channelName) == channels.end())
 	{
@@ -129,6 +131,7 @@ void Server::handleTopicCommand(Client &client, const CommandParser::ParsedComma
 
 	std::string channelName = command.params[0];
 	std::string topic = (command.params.size() > 1) ? command.params[1] : "";
+	std::cout << "TOPIC command received: " << "on channel :" << command.params[0] << std::endl;
 
 	if (channels.find(channelName) == channels.end())
 	{
@@ -179,6 +182,11 @@ static void handlePasswordMode(bool adding, const CommandParser::ParsedCommand &
 			client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " MODE :Not enough parameters");
 			return;
 		}
+		if (command.params[paramIndex].empty())
+        {
+            client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " MODE :Password cannot be empty");
+            return;
+        }
 		channel->setPassword(command.params[paramIndex++]);
 	}
 	else
@@ -235,7 +243,6 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 		client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " " + client.getNickname() + " MODE :Not enough parameters");
 		return;
 	}
-
 	std::string channelName = command.params[0];
 
 	if (channels.find(channelName) == channels.end())
@@ -261,6 +268,7 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 	}
 
 	std::string modeChange = command.params[1];
+	std::cout << "MODE command received: " << command.params[0] << " " << command.params[1] << std::endl;
 	std::set<char> activeModes;
 
 	// Certains modes sont incompatibles entre eux
