@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:16 by gchamore          #+#    #+#             */
-/*   Updated: 2025/02/03 13:20:05 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/03 17:14:49 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,13 +119,13 @@ void Channel::addOperator(Client *client)
 
 	if (!isMember(client))
 	{
-		client->sendResponse("441 " + client->getNickname() + " " + name + " :They aren't on that channel");
+		client->sendResponse(":server " + ServerMessages::ERR_USERNOTINCHANNEL + " " + client->getNickname() + " " + name + " :They aren't on that channel");
 		return;
 	}
 
 	if (isOperator(client))
 	{
-		client->sendResponse("443 " + client->getNickname() + " " + name + " :They are already an operator");
+		client->sendResponse(":server " + ServerMessages::ERR_USERONCHANNEL + " " + client->getNickname() + " " + name + " :They are already an operator");
 		return;
 	}
 
@@ -159,11 +159,11 @@ void Channel::sendTopic(Client *client) const
 
 	if (!hasTopic())
 	{
-		client->sendResponse("331 " + name + " :No topic is set");
+		client->sendResponse(":server " + ServerMessages::RPL_NOTOPIC + " " + name + " :No topic is set");
 	}
 	else
 	{
-		client->sendResponse("332 " + name + " :" + topic);
+		client->sendResponse(":server " + ServerMessages::RPL_TOPIC + " " + name + " :" + topic);
 	}
 }
 
@@ -172,7 +172,7 @@ void Channel::sendUserList(Client *client) const
 	if (!client)
 		throw std::invalid_argument("Client cannot be null");
 
-	std::string response = "353 " + client->getNickname() + " = " + name + " :";
+	std::string response = ":server " + ServerMessages::RPL_NAMREPLY + " " + client->getNickname() + " = " + name + " :";
 	for (std::vector<Client *>::const_iterator it = members.begin(); it != members.end(); ++it)
 	{
 		response += (*it)->getNickname() + " ";
