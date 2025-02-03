@@ -6,7 +6,7 @@
 /*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 18:22:47 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/03 18:25:01 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -564,8 +564,7 @@ void Server::handleQuitCommand(const CommandParser::ParsedCommand &command, Clie
 {
 	std::string tmp = command.params.empty() ? "nothing to say..." : command.params[0];
 	std::string notification = ":" + client.getNickname() + "!" + client.getUsername() + " QUIT :" + tmp;
-	if (!command.params.empty())
-		std::cout << "QUIT command received: " << command.params[0] << std::endl;
+	std::cout << "QUIT command received: " << tmp << std::endl;
 
 	const std::vector<Channel *> &clientChannels = client.getChannels(*this);
 	for (std::vector<Channel *>::const_iterator it = clientChannels.begin(); it != clientChannels.end(); ++it)
