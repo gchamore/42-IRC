@@ -6,25 +6,24 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:57:55 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/30 15:30:39 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/03 11:45:32 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef COMMAND_PARSER_HPP
 #define COMMAND_PARSER_HPP
 
-#include "../includes/Debug.hpp"
+#include "Debug.hpp"
+#include "ServerMessages.hpp"
+#include "Constants.hpp"
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <iostream>
 
 class CommandParser
 {
 public:
-    // RFC 2812 Constants
-    static const size_t MAX_PARAMS = 15;
-    static const size_t MAX_PREFIX_LEN = 512;
-    static const size_t MAX_COMMAND_LEN = 510;
 
     class ParseError : public std::runtime_error
     {

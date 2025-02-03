@@ -6,18 +6,22 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:57:59 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/30 15:30:56 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/03 11:46:19 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 
+#include "Debug.hpp"
+#include "Client.hpp"
+#include "ServerMessages.hpp"
+#include "CommandParser.hpp"
+#include "Constants.hpp"
 #include <string>
 #include <vector>
 #include <map>
 #include <set>
-#include "Client.hpp"
 #include <ctime>
 
 class Client;

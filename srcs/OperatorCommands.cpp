@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 13:12:16 by anferre           #+#    #+#             */
-/*   Updated: 2025/01/30 16:23:59 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/03 11:04:10 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,6 +262,14 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 	}
 
 	std::string modeChange = command.params[1];
+	std::set<char> activeModes;
+
+	// Certains modes sont incompatibles entre eux
+	if (activeModes.find('i') != activeModes.end() && 
+		activeModes.find('p') != activeModes.end()) {
+		client.sendResponse(":server 472 * :Incompatible channel modes");
+		return;
+	}
 
 	if (!channel->isOperator(&client))
 	{
