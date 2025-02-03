@@ -6,7 +6,7 @@ CLIENTS=100
 # Run the test
 for i in $(seq 1 $CLIENTS); do
     (
-        echo -ne "NICK user$i\r\nUSER user$i 0 * :User $i\r\nJOIN #stress\r\n" | nc localhost 6667
+        echo -ne "PASS password123 \r\nNICK user$i\r\nUSER user$i 0 * :User $i\r\nJOIN #stress\r\n" | nc localhost 6667
     ) &
 done
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerCommands.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 16:02:19 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/03 17:10:32 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,8 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 			if (DEBUG_MODE)
 				std::cout << "User before: " << client.getUsername() << std::endl;
 			handleUserCommand(command, client);
-			std::cout << "User command received:" << command.params[0] << std::endl;
+			if (! command.params.empty())
+				std::cout << "User command received:" << command.params[0] << std::endl;
 			if (DEBUG_MODE)
 				std::cout << "User after: " << client.getUsername() << std::endl;
 		}
@@ -272,21 +273,16 @@ void Server::handleUserCommand(const CommandParser::ParsedCommand &command, Clie
 		client.sendResponse(":server " + ServerMessages::ERR_NONICKNAMEGIVEN + " * :No nickname given");
 		return;
 	}
-
-	// La commande USER nécessite 4 paramètres selon RFC 2812:
-	// USER <username> <hostname> <servername> :<realname>
-	if (command.params.size() < 4)
+	if (command.params.size() < 1)
 	{
 		client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " * USER :Not enough parameters. Usage: USER <username> <hostname> <servername> :<realname>");
 		return;
 	}
-
 	if (!this->isValidUsername(command.params[0]))
 	{
 		client.sendResponse(":server " + ServerMessages::ERR_ERRONEUSNICKNAME + " * :Erroneous username");
 		return;
 	}
-
 	client.setUsername(command.params[0]);
 	client.setState(Client::REGISTERED);
 
@@ -467,6 +463,7 @@ void Server::handlePrivmsgCommand(const CommandParser::ParsedCommand &command, C
 		client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " * PRIVMSG :Not enough parameters");
 		return;
 	}
+	std::cout << "Privmsg command received:" << command.params[0] << std::endl;
 	std::string target = command.params[0];
 	std::string message = command.params[1];
 

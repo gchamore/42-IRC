@@ -170,11 +170,11 @@ void Server::accept_new_client()
 
 		// Send a welcome message with command documentation
 		std::string welcome_message =
-			":server NOTICE Auth :*** Welcome to the IRC Network ***\r\n"
-			":server NOTICE Auth :*** Required registration steps:\r\n"
-			":server NOTICE Auth :*** 1. PASS <password>\r\n"
-			":server NOTICE Auth :*** 2. NICK <nickname> (letters, numbers, and -[]`^{})\r\n"
-			":server NOTICE Auth :*** 3. USER <username> <hostname> <servername> :<realname> - All fields required\r\n";
+			":server :*** Welcome to the IRC Network ***\r\n"
+			":server :*** Required registration steps:\r\n"
+			":server :*** 1. PASS <password>\r\n"
+			":server :*** 2. NICK <nickname> (letters, numbers, and -[]`^{})\r\n"
+			":server :*** 3. USER <username>\r\n";
 		clients[client_fd]->sendResponse(welcome_message);
 	}
 }
