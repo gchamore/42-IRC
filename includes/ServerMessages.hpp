@@ -34,32 +34,35 @@ namespace ServerMessages
 	const std::string RPL_MOTDSTART = "375"; // ":- <server> Message of the day - "
 	const std::string RPL_ENDOFMOTD = "376"; // ":End of MOTD command"
 
-	// Error messages (400-599)
-	const std::string ERR_NOSUCHNICK = "401";
-	const std::string ERR_NOSUCHSERVER = "402";
-	const std::string ERR_NOSUCHCHANNEL = "403";
-	const std::string ERR_CANNOTSENDTOCHAN = "404";
-	const std::string ERR_TOOMANYCHANNELS = "405";
-	const std::string ERR_WASNOSUCHNICK = "406";
-	const std::string ERR_NOORIGIN = "409";
-	const std::string ERR_NORECIPIENT = "411";
-	const std::string ERR_NOTEXTTOSEND = "412";
-	const std::string ERR_UNKNOWNCOMMAND = "421";
-	const std::string ERR_NONICKNAMEGIVEN = "431";
-	const std::string ERR_ERRONEUSNICKNAME = "432";
-	const std::string ERR_NICKNAMEINUSE = "433";
-	const std::string ERR_USERNOTINCHANNEL = "441";
-	const std::string ERR_NOTONCHANNEL = "442";
-	const std::string ERR_USERONCHANNEL = "443";
-	const std::string ERR_NOTREGISTERED = "451";
-	const std::string ERR_NEEDMOREPARAMS = "461";
-	const std::string ERR_ALREADYREGISTERED = "462";
-	const std::string ERR_PASSWDMISMATCH = "464";
-	const std::string ERR_CHANNELISFULL = "471";
-	const std::string ERR_INVITEONLYCHAN = "473";
-	const std::string ERR_BANNEDFROMCHAN = "474";
-	const std::string ERR_BADCHANNELKEY = "475";
-	const std::string ERR_CHANOPRIVSNEEDED = "482";
+    // Error messages (400-599)
+    const std::string ERR_NOSUCHNICK = "401";
+    const std::string ERR_NOSUCHSERVER = "402";
+    const std::string ERR_NOSUCHCHANNEL = "403";
+    const std::string ERR_CANNOTSENDTOCHAN = "404";
+    const std::string ERR_TOOMANYCHANNELS = "405";
+    const std::string ERR_WASNOSUCHNICK = "406";
+    const std::string ERR_NOORIGIN = "409";
+    const std::string ERR_NORECIPIENT = "411";
+    const std::string ERR_NOTEXTTOSEND = "412";
+    const std::string ERR_UNKNOWNCOMMAND = "421";
+    const std::string ERR_NONICKNAMEGIVEN = "431";
+    const std::string ERR_ERRONEUSNICKNAME = "432";
+    const std::string ERR_NICKNAMEINUSE = "433";
+    const std::string ERR_USERNOTINCHANNEL = "441";
+    const std::string ERR_NOTONCHANNEL = "442";
+    const std::string ERR_USERONCHANNEL = "443";
+    const std::string ERR_NOTREGISTERED = "451";
+    const std::string ERR_NEEDMOREPARAMS = "461";
+    const std::string ERR_ALREADYREGISTERED = "462";
+    const std::string ERR_PASSWDMISMATCH = "464";
+    const std::string ERR_CHANNELISFULL = "471";
+    const std::string ERR_UNKNOWNMODE = "472";
+    const std::string ERR_INVITEONLYCHAN = "473";
+    const std::string ERR_BANNEDFROMCHAN = "474";
+    const std::string ERR_BADCHANNELKEY = "475";
+    const std::string ERR_CHANOPRIVSNEEDED = "482";
+
+    const std::string ERR_UMODEUNKNOWNFLAG = "501";
 
 	// Message templates
 	namespace Templates

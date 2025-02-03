@@ -6,7 +6,7 @@
 /*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 13:12:16 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 13:20:37 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/03 16:01:52 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void Server::handleKickCommand(Client &client, const CommandParser::ParsedComman
 {
 	if (command.params.size() < 2)
 	{
-		client.sendResponse("461 KICK :Not enough parameters");
+		client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " KICK :Not enough parameters");
 		return;
 	}
 
@@ -37,7 +37,7 @@ void Server::handleKickCommand(Client &client, const CommandParser::ParsedComman
 
 	if (channels.find(channelName) == channels.end())
 	{
-		client.sendResponse("403 " + channelName + " :No such channel");
+		client.sendResponse(":server " + ServerMessages::ERR_NOSUCHCHANNEL + " " + channelName + " :No such channel");
 		return;
 	}
 
@@ -45,7 +45,7 @@ void Server::handleKickCommand(Client &client, const CommandParser::ParsedComman
 
 	if (!channel->isOperator(&client))
 	{
-		client.sendResponse("482 " + channelName + " :You're not a channel operator");
+		client.sendResponse(":server " + ServerMessages::ERR_CHANOPRIVSNEEDED + " " + channelName + " :You're not a channel operator");
 		return;
 	}
 
@@ -53,7 +53,7 @@ void Server::handleKickCommand(Client &client, const CommandParser::ParsedComman
 	Client *target = this->getClientByNickname(nickname);
 	if (!target || !channel->isMember(target))
 	{
-		client.sendResponse("441 " + nickname + " " + channelName + " :They aren't on that channel");
+		client.sendResponse(":server " + ServerMessages::ERR_USERNOTINCHANNEL + " " + nickname + " " + channelName + " :They aren't on that channel");
 		return;
 	}
 
@@ -70,7 +70,7 @@ void Server::handleInviteCommand(Client &client, const CommandParser::ParsedComm
 {
 	if (command.params.size() < 2)
 	{
-		client.sendResponse("461 INVITE :Not enough parameters");
+		client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " INVITE :Not enough parameters");
 		return;
 	}
 
@@ -79,7 +79,7 @@ void Server::handleInviteCommand(Client &client, const CommandParser::ParsedComm
 
 	if (channels.find(channelName) == channels.end())
 	{
-		client.sendResponse("403 " + channelName + " :No such channel");
+		client.sendResponse(":server " + ServerMessages::ERR_NOSUCHCHANNEL + " " + channelName + " :No such channel");
 		return;
 	}
 
@@ -88,14 +88,14 @@ void Server::handleInviteCommand(Client &client, const CommandParser::ParsedComm
 	// Check if the client is on the channel
 	if (!channel->isMember(&client))
 	{
-		client.sendResponse("442 " + channelName + " :You're not on that channel");
+		client.sendResponse(":server " + ServerMessages::ERR_NOTONCHANNEL + " " + channelName + " :You're not on that channel");
 		return;
 	}
 
 	// Check if the channel is invite only and the client is not an operator
 	if (channel->isInviteOnly() && !channel->isOperator(&client))
 	{
-		client.sendResponse("482 " + channelName + " :You're not a channel operator");
+		client.sendResponse(":server " + ServerMessages::ERR_CHANOPRIVSNEEDED + " " + channelName + " :You're not a channel operator");
 		return;
 	}
 
@@ -103,19 +103,19 @@ void Server::handleInviteCommand(Client &client, const CommandParser::ParsedComm
 	Client *target = this->getClientByNickname(nickname);
 	if (!target)
 	{
-		client.sendResponse("401 " + nickname + " :No such nick/channel");
+		client.sendResponse(":server " + ServerMessages::ERR_NOSUCHNICK + " " + nickname + " :No such nick/channel");
 		return;
 	}
 
 	// If the target is already on the channel, we don't need to send an invite
 	if (channel->isMember(target))
 	{
-		client.sendResponse("443 " + nickname + " " + channelName + " :is already on channel");
+		client.sendResponse(":server " + ServerMessages::ERR_USERONCHANNEL + " " + nickname + " " + channelName + " :is already on channel");
 		return;
 	}
 
 	channel->addInvite(target);
-	client.sendResponse("341 " + client.getNickname() + " " + nickname + " " + channelName);
+	client.sendResponse(":server " + ServerMessages::RPL_INVITING + " " + client.getNickname() + " " + nickname + " " + channelName);
 	target->sendResponse(":" + client.getNickname() + " INVITE " + nickname + " :" + channelName);
 }
 
@@ -123,7 +123,7 @@ void Server::handleTopicCommand(Client &client, const CommandParser::ParsedComma
 {
 	if (command.params.size() < 1)
 	{
-		client.sendResponse("461 TOPIC :Not enough parameters");
+		client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " TOPIC :Not enough parameters");
 		return;
 	}
 
@@ -132,7 +132,7 @@ void Server::handleTopicCommand(Client &client, const CommandParser::ParsedComma
 
 	if (channels.find(channelName) == channels.end())
 	{
-		client.sendResponse("403 " + channelName + " :No such channel");
+		client.sendResponse(":server " + ServerMessages::ERR_NOSUCHCHANNEL + " " + channelName + " :No such channel");
 		return;
 	}
 
@@ -141,15 +141,15 @@ void Server::handleTopicCommand(Client &client, const CommandParser::ParsedComma
 	if (command.params.size() == 1)
 	{
 		if (channel->hasTopic())
-			client.sendResponse("332 " + channelName + " :" + channel->getTopic());
+			client.sendResponse(":server " + ServerMessages::RPL_TOPIC + " " + channelName + " :" + channel->getTopic());
 		else
-			client.sendResponse("331 " + channelName + " :No topic is set");
+			client.sendResponse(":server " + ServerMessages::RPL_NOTOPIC + " " + channelName + " :No topic is set");
 		return;
 	}
 
 	if (channel->isTopicRestricted() && !channel->isOperator(&client))
 	{
-		client.sendResponse("482 " + channelName + " :You're not a channel operator");
+		client.sendResponse(":server " + ServerMessages::ERR_CHANOPRIVSNEEDED + " " + channelName + " :You're not a channel operator");
 		return;
 	}
 
@@ -176,7 +176,7 @@ static void handlePasswordMode(bool adding, const CommandParser::ParsedCommand &
 	{
 		if (command.params.size() <= paramIndex)
 		{
-			client.sendResponse("461 MODE :Not enough parameters");
+			client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " MODE :Not enough parameters");
 			return;
 		}
 		channel->setPassword(command.params[paramIndex++]);
@@ -191,14 +191,14 @@ static void handleOperatorMode(bool adding, const CommandParser::ParsedCommand &
 {
 	if (command.params.size() <= paramIndex)
 	{
-		client.sendResponse("461 MODE :Not enough parameters");
+		client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " MODE :Not enough parameters");
 		return;
 	}
 
 	Client *target = server.getClientByNickname(command.params[paramIndex++]);
 	if (!target || !channel->isMember(target))
 	{
-		client.sendResponse("441 " + target->getNickname() + " " + channelName + " :They aren't on that channel");
+		client.sendResponse(":server " + ServerMessages::ERR_USERNOTINCHANNEL + " " + target->getNickname() + " " + channelName + " :They aren't on that channel");
 		return;
 	}
 
@@ -214,7 +214,7 @@ static void handleUserLimitMode(bool adding, const CommandParser::ParsedCommand 
 	{
 		if (command.params.size() <= paramIndex)
 		{
-			client.sendResponse("461 MODE :Not enough parameters");
+			client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " MODE :Not enough parameters");
 			return;
 		}
 		std::stringstream ss(command.params[paramIndex++]);
@@ -232,7 +232,7 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 {
 	if (command.params.empty())
 	{
-		client.sendResponse(":server 461 " + client.getNickname() + " MODE :Not enough parameters");
+		client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " " + client.getNickname() + " MODE :Not enough parameters");
 		return;
 	}
 
@@ -240,7 +240,7 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 
 	if (channels.find(channelName) == channels.end())
 	{
-		client.sendResponse(":server 403 " + client.getNickname() + " " + channelName + " :No such channel");
+		client.sendResponse(":server " + ServerMessages::ERR_NOSUCHCHANNEL + " " + client.getNickname() + " " + channelName + " :No such channel");
 		return;
 	}
 
@@ -256,7 +256,7 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 		if (channel->getUserLimit() > 0)
 			modes += "l";
 
-		client.sendResponse(":server 324 " + client.getNickname() + " " + channelName + " " + modes);
+		client.sendResponse(":server " + ServerMessages::RPL_CHANNELMODEIS + " " + client.getNickname() + " " + channelName + " " + modes);
 		return;
 	}
 
@@ -264,16 +264,15 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 	std::set<char> activeModes;
 
 	// Certains modes sont incompatibles entre eux
-	if (activeModes.find('i') != activeModes.end() &&
-		activeModes.find('p') != activeModes.end())
-	{
-		client.sendResponse(":server 472 * :Incompatible channel modes");
+	if (activeModes.find('i') != activeModes.end() && 
+		activeModes.find('p') != activeModes.end()) {
+		client.sendResponse(":server " + ServerMessages::ERR_UNKNOWNMODE + " :is unknown mode to me for " + channelName);
 		return;
 	}
 
 	if (!channel->isOperator(&client))
 	{
-		client.sendResponse("482 " + channelName + " :You're not a channel operator");
+		client.sendResponse(":server " + ServerMessages::ERR_CHANOPRIVSNEEDED + " " + channelName + " :You're not a channel operator");
 		return;
 	}
 
@@ -312,10 +311,10 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 			handleUserLimitMode(adding, command, paramIndex, client, channel);
 			break;
 		default:
-			client.sendResponse("501 MODE :Unknown MODE flag");
+			client.sendResponse(":server " + ServerMessages::ERR_UMODEUNKNOWNFLAG + "MODE :Unknown MODE flag");
 		}
 		std::string notification = ":" + client.getNickname() + " MODE " + channelName + " " + modeChange;
 		this->broadcast_message(channelName, notification, NULL);
-		client.sendResponse(":server 324 " + client.getNickname() + " " + channelName + " " + modeChange);
+		client.sendResponse(":server " + ServerMessages::RPL_CHANNELMODEIS + client.getNickname() + " " + channelName + " " + modeChange);
 	}
 }

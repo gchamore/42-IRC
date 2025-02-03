@@ -6,10 +6,10 @@
 /*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 13:20:20 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 13:20:21 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/03 16:01:34 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Debug.hpp"
 
-bool DEBUG_MODE = true; // Définition de la variable globale
+bool DEBUG_MODE = false;  // Définition de la variable globale

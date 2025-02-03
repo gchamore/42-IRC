@@ -6,7 +6,7 @@
 /*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:21 by gchamore          #+#    #+#             */
-/*   Updated: 2025/02/03 13:20:10 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/03 16:01:03 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,17 +141,15 @@ std::string Client::popCommand()
 
 void Client::sendResponse(const std::string &response)
 {
-	if (DEBUG_MODE)
-	{
-		std::cout << "Sending to " << this->nickname << ": " << response << std::endl;
-	}
-	// Forcer CRLF à la fin
-	std::string responseWithCRLF = response;
-	if (responseWithCRLF.length() < 2 ||
-		responseWithCRLF.substr(responseWithCRLF.length() - 2) != "\r\n")
-	{
-		responseWithCRLF += "\r\n";
-	}
+    if (DEBUG_MODE)
+        std::cout << "Sending to " << this->nickname << " " << response << std::endl;
+    // Forcer CRLF à la fin
+    std::string responseWithCRLF = response;
+    if (responseWithCRLF.length() < 2 || 
+        responseWithCRLF.substr(responseWithCRLF.length() - 2) != "\r\n")
+    {
+        responseWithCRLF += "\r\n";
+    }
 
 	if (send(fd, responseWithCRLF.c_str(), responseWithCRLF.length(), 0) < 0)
 	{
