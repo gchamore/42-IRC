@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   OperatorCommands.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 13:12:16 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 17:48:35 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/03 18:17:58 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,16 +182,30 @@ static void handlePasswordMode(bool adding, const CommandParser::ParsedCommand &
 			client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " MODE :Not enough parameters");
 			return;
 		}
-		if (command.params[paramIndex].empty())
-        {
-            client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " MODE :Password cannot be empty");
-            return;
-        }
-		channel->setPassword(command.params[paramIndex++]);
+		std::string password = command.params[paramIndex++];
+		std::cout << "password : $" << password << "$"<< std::endl;
+		bool isWhitespaceOnly = true;
+		for (size_t i = 0; i < password.size(); ++i)
+		{
+			if (!std::isspace(static_cast<unsigned char>(password[i])))
+			{
+				isWhitespaceOnly = false;
+				break;
+			}
+		}
+
+		if (isWhitespaceOnly)
+		{
+			client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " MODE :Not enough parameters");
+			return;
+		}
+		channel->removePassword();
+		channel->setPassword(password);
 	}
 	else
 	{
 		channel->removePassword();
+		
 	}
 }
 
@@ -272,8 +286,9 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 	std::set<char> activeModes;
 
 	// Certains modes sont incompatibles entre eux
-	if (activeModes.find('i') != activeModes.end() && 
-		activeModes.find('p') != activeModes.end()) {
+	if (activeModes.find('i') != activeModes.end() &&
+		activeModes.find('p') != activeModes.end())
+	{
 		client.sendResponse(":server " + ServerMessages::ERR_UNKNOWNMODE + " :is unknown mode to me for " + channelName);
 		return;
 	}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:16 by gchamore          #+#    #+#             */
-/*   Updated: 2025/02/03 17:14:49 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/03 18:18:46 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,7 @@ const std::string &Channel::getPassword() const
 void Channel::removePassword()
 {
 	password.clear();
+	this->password = "";
 }
 
 void Channel::setUserLimit(int limit)

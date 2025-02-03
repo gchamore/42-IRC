@@ -6,7 +6,7 @@
 /*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/03 13:17:15 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 13:19:57 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/03 18:01:24 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cerrno>
+#include <cctype>
 
 class Client;
 class Channel;
