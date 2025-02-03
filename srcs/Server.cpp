@@ -227,7 +227,6 @@ void Server::handle_client_data(int client_fd)
 
 void Server::remove_client(int client_fd)
 {
-	std::cout << "Client disconnected: " << clients[client_fd]->getNickname() << std::endl;
 	std::vector<Channel *> clientChannels = getChannelsForClient(clients[client_fd]);
 	for (std::vector<Channel *>::iterator it = clientChannels.begin(); it != clientChannels.end(); ++it)
 	{

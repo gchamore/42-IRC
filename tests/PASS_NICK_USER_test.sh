@@ -1,5 +1,5 @@
 #!/bin/bash
-exec 3<>/dev/tcp/localhost/8080
+exec 3<>/dev/tcp/localhost/6667
 echo "PASS test" >&3
 sleep 1
 echo "NICK anto" >&3
