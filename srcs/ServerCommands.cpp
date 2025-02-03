@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerCommands.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 13:08:34 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/03 13:20:45 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 		if (command.command == "PASS")
 		{
 			if (command.params.empty())
-            {
+			{
 				client.sendResponse("461 PASS :Not enough parameters");
 				return;
 			}
@@ -344,7 +344,8 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 	}
 
 	// Vérifier la limite maximale de canaux par client (typiquement 10)
-	if (client.getChannels(*this).size() >= 10) {
+	if (client.getChannels(*this).size() >= 10)
+	{
 		client.sendResponse(":server " + ServerMessages::ERR_TOOMANYCHANNELS + " * :You have joined too many channels");
 		return;
 	}
@@ -417,7 +418,7 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 			{
 				client.sendResponse(":server 473 " + client.getNickname() + " " + channelName + " :Cannot join channel (+i)");
 				continue;
-				}
+			}
 			if (channel->getMembers().size() >= Constants::MAX_USERS_PER_CHANNEL)
 			{
 				client.sendResponse(":server 471 " + client.getNickname() + " " + channelName + " :Channel is full");
@@ -476,14 +477,16 @@ void Server::handlePrivmsgCommand(const CommandParser::ParsedCommand &command, C
 	}
 
 	// Vérifier la longueur maximale du message (RFC 2812 section 2.3)
-	if (message.length() > 510) { // 512 - 2 (CRLF)
+	if (message.length() > 510)
+	{ // 512 - 2 (CRLF)
 		client.sendResponse(":server 417 * :Message too long");
 		return;
 	}
 
 	// Support des messages multi-destinataires
 	std::vector<std::string> targets = split(target, ',');
-	for (size_t i = 0; i < targets.size(); ++i) {
+	for (size_t i = 0; i < targets.size(); ++i)
+	{
 		// ...traitement pour chaque destinataire...
 	}
 
@@ -594,11 +597,11 @@ void Server::handleWhoCommand(const CommandParser::ParsedCommand &command, Clien
 			{
 				// Format: "<client> <user> <host> <server> <nick> <H|G> :<hopcount> <real name>"
 				client.sendResponse(":server " + ServerMessages::RPL_WHOREPLY + " " + client.getNickname() + " * " +
-									target->getUsername() +          // username
-									" " + "localhost" +              // host
-									" irc.server" +                  // server
-									" " + target->getNickname() +    // nickname
-									" H" +                           // Here (H) or Gone (G)
+									target->getUsername() +			 // username
+									" " + "localhost" +				 // host
+									" irc.server" +					 // server
+									" " + target->getNickname() +	 // nickname
+									" H" +							 // Here (H) or Gone (G)
 									" :0 " + target->getUsername()); // hopcount et realname
 			}
 		}
@@ -620,11 +623,11 @@ void Server::handleWhoCommand(const CommandParser::ParsedCommand &command, Clien
 
 				// Format : "<channel> <user> <host> <server> <nick> <H|G>[*][@|+] :<hopcount> <real name>"
 				client.sendResponse(":server " + ServerMessages::RPL_WHOREPLY + " " + client.getNickname() + " " + target +
-									" " + (*it)->getUsername() +    // username
-									" localhost" +                  // host
-									" irc.server" +                 // server
-									" " + (*it)->getNickname() +    // nickname
-									" H" + prefix +                 // Here + operator status
+									" " + (*it)->getUsername() +	// username
+									" localhost" +					// host
+									" irc.server" +					// server
+									" " + (*it)->getNickname() +	// nickname
+									" H" + prefix +					// Here + operator status
 									" :0 " + (*it)->getUsername()); // hopcount + realname
 			}
 

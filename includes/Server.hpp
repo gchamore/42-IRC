@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/03 13:17:15 by anferre           #+#    #+#             */
+/*   Updated: 2025/02/03 13:19:57 by anferre          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
@@ -34,7 +46,7 @@ private:
 	std::string server_password;
 	std::vector<pollfd> poll_fds;
 	std::map<int, Client *> clients;
-	std::map<std::string, Channel *> channels;  // Stockage de tous les canaux
+	std::map<std::string, Channel *> channels; // Stockage de tous les canaux
 
 	void setup_server();
 	void accept_new_client();
@@ -43,7 +55,7 @@ private:
 	void broadcast_message(const std::string &channelName, const std::string &message, Client *exclude);
 	void delete_channel(const std::string &channelName);
 
-	//serverCommands
+	// serverCommands
 	void handleCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handlePassCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handleNickCommand(const CommandParser::ParsedCommand &command, Client &client);
@@ -52,14 +64,14 @@ private:
 	void handleUserCommand(const CommandParser::ParsedCommand &command, Client &client);
 	bool isValidUsername(const std::string &username);
 	void handleJoinCommand(const CommandParser::ParsedCommand &command, Client &client);
-	bool isValidChannelName(const std::string &channelName) const;  // Ajout du point-virgule
+	bool isValidChannelName(const std::string &channelName) const; // Ajout du point-virgule
 	void handlePrivmsgCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handlePartCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handleQuitCommand(const CommandParser::ParsedCommand &command, Client &client);
 	void handleModeCommand(Client &client, const CommandParser::ParsedCommand &command);
 	void handleWhoCommand(const CommandParser::ParsedCommand &command, Client &client);
 
-	//operatorCommands 
+	// operatorCommands
 	void handleKickCommand(Client &client, const CommandParser::ParsedCommand &command);
 	void handleInviteCommand(Client &client, const CommandParser::ParsedCommand &command);
 	void handleTopicCommand(Client &client, const CommandParser::ParsedCommand &command);

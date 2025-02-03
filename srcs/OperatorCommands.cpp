@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   OperatorCommands.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 13:12:16 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 11:04:10 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/03 13:20:37 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,7 @@ void Server::handleKickCommand(Client &client, const CommandParser::ParsedComman
 		return;
 	}
 
-	std::string notification = ":" + client.getNickname() + "!" + client.getUsername() + "@" + "localhost" \
-	+ " KICK " + channelName + " " + nickname + " :" + reason;
+	std::string notification = ":" + client.getNickname() + "!" + client.getUsername() + "@" + "localhost" + " KICK " + channelName + " " + nickname + " :" + reason;
 	this->broadcast_message(channelName, notification, NULL);
 	channel->removeMember(target);
 	if (channel->getMembers().empty())
@@ -265,8 +264,9 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 	std::set<char> activeModes;
 
 	// Certains modes sont incompatibles entre eux
-	if (activeModes.find('i') != activeModes.end() && 
-		activeModes.find('p') != activeModes.end()) {
+	if (activeModes.find('i') != activeModes.end() &&
+		activeModes.find('p') != activeModes.end())
+	{
 		client.sendResponse(":server 472 * :Incompatible channel modes");
 		return;
 	}
