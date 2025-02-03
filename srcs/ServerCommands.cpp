@@ -6,7 +6,7 @@
 /*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 17:13:50 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/03 17:51:14 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 				std::cout << "is Authenticated: " << client.authenticated() << std::endl;
 			handlePassCommand(command, client);
 			std::cout << "User number : " << client.getId() << "\n" << std::endl;
-			std::cout << "Pass command received: " << command.params[0] << std::endl;
+			std::cout << "PASS command received: " << command.params[0] << std::endl;
 			if (DEBUG_MODE)
 				std::cout << "is Authenticated: " << client.authenticated() << std::endl;
 		}
@@ -66,7 +66,7 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 			if (DEBUG_MODE)
 				std::cout << "Nick before: " << client.getNickname() << std::endl;
 			handleNickCommand(command, client);
-			std::cout << "Nick command received:" << client.getNickname() << std::endl;
+			std::cout << "NICK command received:" << client.getNickname() << std::endl;
 			if (DEBUG_MODE)
 				std::cout << "Nick after: " << client.getNickname() << std::endl;
 		}
@@ -90,10 +90,7 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 		else if (command.command == "JOIN")
 			handleJoinCommand(command, client);
 		else if (command.command == "WHO")
-		{
-			std::cout << "WHO command received with params: " << (command.params.empty() ? "none" : command.params[0]) << std::endl;
 			handleWhoCommand(command, client);
-		}
 		else if (command.command == "PRIVMSG")
 			handlePrivmsgCommand(command, client);
 		else if (command.command == "PART")
@@ -338,6 +335,7 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 		client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " " + client.getNickname() + " JOIN :Not enough parameters");
 		return;
 	}
+	std::cout << "JOIN command received: " << command.params[0] << std::endl;
 
 	// Vérifier la limite maximale de canaux par client (typiquement 10)
 	if (client.getChannels(*this).size() >= 10)
@@ -526,6 +524,7 @@ void Server::handlePartCommand(const CommandParser::ParsedCommand &command, Clie
 		client.sendResponse(":server" + ServerMessages::ERR_NEEDMOREPARAMS + "PART :Not enough parameters");
 		return;
 	}
+	std::cout << "PART command received: " << command.params[0] << std::endl;
 	const std::string channelList = command.params[0];
 	const std::string reason = (command.params.size() > 1) ? command.params[1] : "Leaving";
 
@@ -565,6 +564,7 @@ void Server::handleQuitCommand(const CommandParser::ParsedCommand &command, Clie
 {
 	std::string tmp = command.params.empty() ? "nothing to say..." : command.params[0];
 	std::string notification = ":" + client.getNickname() + "!" + client.getUsername() + " QUIT :" + tmp;
+	std::cout << "QUIT command received: " << command.params[0] << std::endl;
 
 	const std::vector<Channel *> &clientChannels = client.getChannels(*this);
 	for (std::vector<Channel *>::const_iterator it = clientChannels.begin(); it != clientChannels.end(); ++it)
@@ -583,6 +583,7 @@ void Server::handleQuitCommand(const CommandParser::ParsedCommand &command, Clie
 void Server::handleWhoCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
 	// Si pas de paramètre, lister tous les utilisateurs visibles
+	std::cout << "WHO command received with params: " << (command.params.empty() ? "none" : command.params[0]) << std::endl;
 	if (command.params.empty())
 	{
 		// Parcourir tous les clients connectés
