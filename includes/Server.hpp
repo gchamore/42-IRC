@@ -1,7 +1,11 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "../includes/Debug.hpp"
+#include "Debug.hpp"
+#include "ServerMessages.hpp"
+#include "CommandParser.hpp"
+#include "Client.hpp"
+#include "Channel.hpp"
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -15,10 +19,6 @@
 #include <vector>
 #include <map>
 #include <cstdlib>
-#include "Client.hpp"
-#include "Channel.hpp"
-#include "CommandParser.hpp"
-#include <sstream>
 #include <ctime>
 #include <cerrno>
 

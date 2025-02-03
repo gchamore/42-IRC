@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:18 by gchamore          #+#    #+#             */
-/*   Updated: 2025/01/30 16:05:10 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/03 11:49:42 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,12 @@ bool CommandParser::isValidCommand(const std::string &cmd)
         return true;
 
     // Special case for testing max length commands
-    if (cmd.length() == MAX_COMMAND_LEN &&
+    if (cmd.length() == Constants::MAX_COMMAND_LEN &&
         std::string(cmd.length(), 'a') == cmd)
         return true;
 
     // Check if command is too long
-    if (cmd.length() > MAX_COMMAND_LEN)
+    if (cmd.length() > Constants::MAX_COMMAND_LEN)
         return false;
 
     // Convert command to uppercase for comparison
@@ -82,7 +82,7 @@ bool CommandParser::isValidCommand(const std::string &cmd)
 
 bool CommandParser::isValidParams(const std::vector<std::string> &params)
 {
-	return params.size() <= MAX_PARAMS;
+	return params.size() <= Constants::MAX_PARAMS;
 }
 
 bool CommandParser::hasValidCRLF(const std::string &message)
@@ -93,7 +93,7 @@ bool CommandParser::hasValidCRLF(const std::string &message)
 
 void CommandParser::parsePrefix(const std::string &raw, ParsedCommand::Prefix &prefix)
 {
-	if (raw.length() > MAX_PREFIX_LEN)
+	if (raw.length() > Constants::MAX_PREFIX_LEN)
 		throw ParseError("Prefix too long");
 	size_t nickEnd = raw.find_first_of("!@", 1);
 
@@ -129,6 +129,11 @@ void CommandParser::parsePrefix(const std::string &raw, ParsedCommand::Prefix &p
 
 std::vector<CommandParser::ParsedCommand> CommandParser::parse(const std::string &rawMessage)
 {
+    if (rawMessage.length() > Constants::MAX_MESSAGE_LENGTH)
+    {
+        throw ParseError("Message exceeds maximum length of 512 bytes");
+    }
+
     std::vector<CommandParser::ParsedCommand> result;
 
     if (rawMessage.empty())
@@ -149,6 +154,23 @@ std::vector<CommandParser::ParsedCommand> CommandParser::parse(const std::string
                 std::cout << rawMessage[i];
         }
         std::cout << "'" << std::endl;
+    }
+
+    // Vérifier les caractères invalides dans le message
+    for (size_t i = 0; i < rawMessage.length(); ++i)
+    {
+        char c = rawMessage[i];
+        if (c == '\0' || c == '\r' || c == '\n')
+        {
+            if (i < rawMessage.length() - 2) // Autorise CRLF à la fin seulement
+                throw ParseError("Invalid control character in message");
+        }
+    }
+    
+    // Vérifier que le message se termine bien par CRLF
+    if (!hasValidCRLF(rawMessage))
+    {
+        throw ParseError("Message must end with CRLF");
     }
 
     // Enlever le \r\n pour le parsing
@@ -208,7 +230,7 @@ std::vector<CommandParser::ParsedCommand> CommandParser::parse(const std::string
         if (!param.empty())
         {
             tempParams.push_back(param);
-            if (tempParams.size() > MAX_PARAMS)
+            if (tempParams.size() > Constants::MAX_PARAMS)
                 throw ParseError("Too many parameters");
         }
         pos = spacePos;
