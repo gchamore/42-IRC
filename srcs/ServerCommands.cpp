@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerCommands.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
+/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/04 12:01:35 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/04 14:43:43 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 		}
 		return; // Silently ignore other commands until authenticated
 	}
+	
 
 	// Handle registration state commands
 	if (client.getState() == Client::REGISTERING)
@@ -105,6 +106,12 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 			handleInviteCommand(client, command);
 		else if (command.command == "TOPIC")
 			handleTopicCommand(client, command);
+		else if (command.command == "PASS")
+			client.sendResponse(":server " + ServerMessages::ERR_ALREADYREGISTERED + " * :You may not reregister");
+		else if (command.command == "USER")
+			client.sendResponse(":server " + ServerMessages::ERR_ALREADYREGISTERED + " * :You may not reregister");
+		else if (command.command == "CAP")
+			client.sendResponse(":server " + ServerMessages::ERR_ALREADYREGISTERED + " * :You may not reregister");
 		else
 			client.sendResponse(":server " + ServerMessages::ERR_UNKNOWNCOMMAND + " * " + command.command + " :Unknown command");
 	}
@@ -343,12 +350,6 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 	}
 	std::cout << "JOIN command received: " << command.params[0] << std::endl;
 
-	// Vérifier la limite maximale de canaux par client (typiquement 10)
-	if (client.getChannels(*this).size() >= 10)
-	{
-		client.sendResponse(":server " + ServerMessages::ERR_TOOMANYCHANNELS + " * :You have joined too many channels");
-		return;
-	}
 
 	// 2. Parse les canaux et mots de passe
 	std::vector<std::string> channelNames = split(command.params[0], ',');
@@ -356,6 +357,13 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 	if (command.params.size() > 1)
 	{
 		passwords = split(command.params[1], ',');
+	}
+	
+	// Vérifier la limite maximale de canaux par client (typiquement 10)
+	if (client.getChannels(*this).size() + channelNames.size() >= 10)
+	{
+		client.sendResponse(":server " + ServerMessages::ERR_TOOMANYCHANNELS + " * :You have joined, or trying to join too many channels");
+		return;
 	}
 
 	if (!passwords.empty() && channelNames.size() != passwords.size())
@@ -406,17 +414,17 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 		{
 			if (channel->isFull())
 			{
-				client.sendResponse(":server " + ServerMessages::ERR_CHANNELISFULL + " " + client.getNickname() + " " + channelName + " :Cannot join channel (+l)");
+				client.sendResponse(":server " + ServerMessages::ERR_CHANNELISFULL + " " + client.getNickname() + " " + channelName + " :Cannot join channel (+l) limit set, channel is full");
 				continue;
 			}
 			if (channel->hasPassword() && channel->getPassword() != providedPassword)
 			{
-				client.sendResponse(":server " + ServerMessages::ERR_BADCHANNELKEY + " " + client.getNickname() + " " + channelName + " :Cannot join channel (+k)");
+				client.sendResponse(":server " + ServerMessages::ERR_BADCHANNELKEY + " " + client.getNickname() + " " + channelName + " :Cannot join channel (+k) wrong key");
 				continue;
 			}
 			if (channel->isInviteOnly() && !channel->isInvited(&client))
 			{
-				client.sendResponse(":server " + ServerMessages::ERR_INVITEONLYCHAN + " " + client.getNickname() + " " + channelName + " :Cannot join channel (+i)");
+				client.sendResponse(":server " + ServerMessages::ERR_INVITEONLYCHAN + " " + client.getNickname() + " " + channelName + " :Cannot join channel (+i) not invited");
 				continue;
 			}
 			if (channel->getMembers().size() >= Constants::MAX_USERS_PER_CHANNEL)

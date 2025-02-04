@@ -1,17 +1,23 @@
 #!/bin/bash
 
 exec 3<>/dev/tcp/localhost/6667
-echo -ne "PASS \r\n" >&3
 echo -ne "PASS test\r\n" >&3
 sleep 1
-echo -ne "NICK \r\n" >&3
 echo -ne "NICK operator\r\n" >&3
 sleep 1
 
-echo -ne "USER  \r\n" >&3
 echo -ne "USER  operator\r\n" >&3
+sleep 1
 
 echo -ne "JOIN #test \r\n" >&3
+sleep 1
+echo -ne "MODE\r\n" >&3
+sleep 
+echo -ne "MODE #nonexistentchannel\r\n" >&3
+sleep 1
+echo -ne "MODE #test \r\n" >&3
+sleep 1
+echo -ne "MODE #test +k \r\n" >&3
 sleep 1
 echo -ne "MODE #test +k secret \r\n" >&3
 sleep 1

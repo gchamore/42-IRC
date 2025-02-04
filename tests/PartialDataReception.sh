@@ -6,7 +6,7 @@ sleep 1
 echo -ne "NICK anto\r\n" >&3
 sleep 1
 
-echo -n "NICK " >&3
+echo -ne "NICK " >&3
 sleep 1
 echo -ne "testnick\r\n" >&3	
 
