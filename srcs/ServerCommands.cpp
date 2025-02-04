@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/04 11:38:39 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/04 12:01:35 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,8 +190,7 @@ void Server::handleNickCommand(const CommandParser::ParsedCommand &command, Clie
 
 		if (!this->isValidNickname(nick))
 		{
-			client.sendResponse(":server " + ServerMessages::ERR_ERRONEUSNICKNAME + " * :Invalid nickname '" + nick +
-								"'. Nickname must start with a letter, be 1-9 chars long, and use only letters, numbers, or -[]`^{}");
+			client.sendResponse(":server " + ServerMessages::ERR_ERRONEUSNICKNAME + " * " + nick + " :Erroneous nickname");
 			return;
 		}
 
