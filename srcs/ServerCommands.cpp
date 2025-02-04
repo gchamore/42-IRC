@@ -6,7 +6,7 @@
 /*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/04 14:43:43 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/04 15:11:19 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 			if (DEBUG_MODE)
 				std::cout << "is Authenticated: " << client.authenticated() << std::endl;
 		}
+		else
+			client.sendResponse(":server " + ServerMessages::ERR_NOTREGISTERED + " * :You must authenticate first with PASS command");
 		return; // Silently ignore other commands until authenticated
 	}
 	
@@ -300,7 +302,7 @@ void Server::handleUserCommand(const CommandParser::ParsedCommand &command, Clie
 	client.sendResponse(":server NOTICE Auth :Username successfully set to " + command.params[0]);
 
 	// Puis envoyer le message de bienvenue
-	client.sendResponse(":server 001 " + client.getNickname() +
+	client.sendResponse(":server " + ServerMessages::RPL_WELCOME + " " + client.getNickname() +
 						" :Welcome to the IRC Network, " + client.getNickname() + "!");
 }
 
@@ -614,7 +616,6 @@ void Server::handleWhoCommand(const CommandParser::ParsedCommand &command, Clien
 									" " + target->getNickname() +	 // nickname
 									" H" +							 // Here (H) or Gone (G)
 									" :0 " + target->getUsername()); // hopcount et realname
-				std::cout << client.getNickname() << " * " << target->getUsername() << " localhost irc.server " << target->getNickname() << " H :0 " << target->getUsername() << std::endl;
 			}
 		}
 		client.sendResponse(":server " + ServerMessages::RPL_ENDOFWHO + " " + client.getNickname() + " :End of WHO list");
@@ -641,7 +642,6 @@ void Server::handleWhoCommand(const CommandParser::ParsedCommand &command, Clien
 									" " + (*it)->getNickname() +	// nickname
 									" H" + prefix +					// Here + operator status
 									" :0 " + (*it)->getUsername()); // hopcount + realname
-				std::cout << client.getNickname() << " " << target << " " << (*it)->getUsername() << " localhost irc.server " << (*it)->getNickname() << " H :0 " << (*it)->getUsername() << std::endl;
 			}
 
 			// Message de fin

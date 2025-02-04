@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:01 by gchamore          #+#    #+#             */
-/*   Updated: 2025/02/03 13:19:04 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/04 13:33:12 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ public:
 	void sendResponse(const std::string &response);
 	std::vector<Channel *> getChannels(const Server &server) const;
 	size_t getId() const { return userId; }
-	// static void resetUserCount() { userCount = 0; }
 
 private:
 	int fd;					 // Descripteur de fichier / (socket)
