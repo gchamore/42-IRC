@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:18 by gchamore          #+#    #+#             */
-/*   Updated: 2025/02/03 16:52:15 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/04 11:14:54 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,21 @@ bool CommandParser::isValidCommand(const std::string &cmd)
 	return false;
 }
 
+bool CommandParser::isValidHostname(const std::string &hostname)
+{
+	if (hostname.empty() || hostname.length() > Constants::MAX_HOSTNAME_LENGTH)
+		return false;
+
+	// Format hostname valide (ex: server.com)
+	for (size_t i = 0; hostname[i]; ++i)
+	{
+		char c = hostname[i];
+		if (!std::isalnum(c) && c != '.' && c != '-')
+			return false;
+	}
+	return true;
+}
+
 bool CommandParser::isValidParams(const std::vector<std::string> &params)
 {
 	return params.size() <= Constants::MAX_PARAMS;
@@ -113,6 +128,8 @@ void CommandParser::parsePrefix(const std::string &raw, ParsedCommand::Prefix &p
 			prefix.username = raw.substr(nickEnd + 1, userEnd - nickEnd - 1);
 			// Extract hostname
 			prefix.hostname = raw.substr(userEnd + 1);
+			if (!isValidHostname(prefix.hostname))
+				throw ParseError("Invalid hostname format");
 		}
 		else
 		{
@@ -123,6 +140,8 @@ void CommandParser::parsePrefix(const std::string &raw, ParsedCommand::Prefix &p
 	{
 		// Extract hostname only
 		prefix.hostname = raw.substr(nickEnd + 1);
+		if (!isValidHostname(prefix.hostname))
+			throw ParseError("Invalid hostname format");
 	}
 }
 

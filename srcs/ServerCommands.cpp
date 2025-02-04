@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerCommands.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 18:25:01 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/04 12:01:35 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,19 +142,25 @@ bool Server::isValidNickname(const std::string &nickname)
 {
 	const std::string specialChars = "-[]`^{}";
 
-	if (nickname.empty() || nickname.length() > 9)
-		return false;
+	if (nickname.empty() || nickname.length() > Constants::MAX_NICKNAME_LENGTH)
+        return false;
 
-	if (!std::isalpha(nickname[0]))
-		return false;
+	if (!std::isalpha(nickname[0]) && nickname[0] != '[' && 
+        nickname[0] != ']' && nickname[0] != '\\' && 
+        nickname[0] != '`' && nickname[0] != '_' && 
+        nickname[0] != '^' && nickname[0] != '{' && 
+        nickname[0] != '|' && nickname[0] != '}')
+        return false;
 
-	for (size_t i = 1; i < nickname.length(); ++i)
+	for (size_t i = 1; i < nickname.length(); i++)
 	{
-		char c = nickname[i];
-		if (!std::isalnum(c) && specialChars.find(c) == std::string::npos)
-			return false;
+        char c = nickname[i];
+        if (!std::isalnum(c) && c != '-' && c != '[' && 
+            c != ']' && c != '\\' && c != '`' && 
+            c != '_' && c != '^' && c != '{' && 
+            c != '|' && c != '}')
+            return false;
 	}
-
 	return true;
 }
 
@@ -184,8 +190,7 @@ void Server::handleNickCommand(const CommandParser::ParsedCommand &command, Clie
 
 		if (!this->isValidNickname(nick))
 		{
-			client.sendResponse(":server " + ServerMessages::ERR_ERRONEUSNICKNAME + " * :Invalid nickname '" + nick +
-								"'. Nickname must start with a letter, be 1-9 chars long, and use only letters, numbers, or -[]`^{}");
+			client.sendResponse(":server " + ServerMessages::ERR_ERRONEUSNICKNAME + " * " + nick + " :Erroneous nickname");
 			return;
 		}
 
@@ -237,22 +242,23 @@ void Server::handleNickCommand(const CommandParser::ParsedCommand &command, Clie
 bool Server::isValidUsername(const std::string &username)
 {
 	// Check length (1–10 characters)
-	if (username.empty() || username.length() > 10)
-		return false;
+	if (username.empty() || username.length() > Constants::MAX_USERNAME_LENGTH)
+        return false;
 
 	// Check allowed characters
 	for (size_t i = 0; username[i]; ++i)
 	{
-		char c = username[i];
-		if (!std::isalnum(c) && c != '-' && c != '.' && c != '_' && c != '~')
-		{
-			return false;
-		}
-	}
+        char c = username[i];
+        // Check for forbidden characters
+        if (c == ' ' || c == '@' || c == '\0' || c == '\r' || c == '\n')
+            return false;
+        // Check for allowed characters
+        if (!std::isalnum(c) && c != '-' && c != '.' && c != '_' && c != '~')
+            return false;
+    }
 
 	return true;
 }
-
 void Server::handleUserCommand(const CommandParser::ParsedCommand &command, Client &client)
 {
 	if (client.getState() != Client::REGISTERING)

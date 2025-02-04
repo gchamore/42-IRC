@@ -9,6 +9,9 @@ namespace Constants
 	static const size_t MAX_COMMAND_LEN = 510; // Length without CRLF
 	static const size_t MAX_CHANNEL_NAME_LENGTH = 50;
 	static const size_t MAX_USERS_PER_CHANNEL = 50;
+	static const size_t MAX_NICKNAME_LENGTH = 9;
+	static const size_t MAX_USERNAME_LENGTH = 16;
+	static const size_t MAX_HOSTNAME_LENGTH = 63;
 }
 
 #endif
