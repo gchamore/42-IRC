@@ -6,7 +6,7 @@
 /*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 13:12:16 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/03 18:17:58 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/04 12:29:24 by anferre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -334,7 +334,7 @@ void Server::handleModeCommand(Client &client, const CommandParser::ParsedComman
 			handleUserLimitMode(adding, command, paramIndex, client, channel);
 			break;
 		default:
-			client.sendResponse(":server " + ServerMessages::ERR_UMODEUNKNOWNFLAG + "MODE :Unknown MODE flag");
+			client.sendResponse(":server " + ServerMessages::ERR_UMODEUNKNOWNFLAG + " MODE :Unknown MODE flag");
 		}
 		std::string notification = ":" + client.getNickname() + " MODE " + channelName + " " + modeChange;
 		this->broadcast_message(channelName, notification, NULL);
