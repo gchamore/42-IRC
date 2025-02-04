@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:18 by gchamore          #+#    #+#             */
-/*   Updated: 2025/02/04 11:14:54 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/04 15:23:02 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,12 +267,4 @@ CommandParser::ParseError::ParseError(const std::string &msg)
 bool CommandParser::ParsedCommand::Prefix::empty() const
 {
 	return nickname.empty() && username.empty() && hostname.empty();
-}
-
-// Pour les GOOGLE UNITS TESTS
-bool CommandParser::ParsedCommand::Prefix::operator==(const Prefix &other) const
-{
-	return nickname == other.nickname &&
-		   username == other.username &&
-		   hostname == other.hostname;
 }

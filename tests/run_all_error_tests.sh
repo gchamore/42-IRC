@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the directory where the test scripts are located
-TEST_DIR="/home/anferre/Documents/RepTooks/IRC/tests/Errors"
+TEST_DIR="/home/gchamore/42Paris/projects_on_duty/irc/tests/Errors"
 
 # List of test scripts
 TEST_SCRIPTS=(

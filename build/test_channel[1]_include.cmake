@@ -1,5 +1,0 @@
-if(EXISTS "/home/gchamore/42Paris/projects_on_duty/irc/build/test_channel[1]_tests.cmake")
-  include("/home/gchamore/42Paris/projects_on_duty/irc/build/test_channel[1]_tests.cmake")
-else()
-  add_test(test_channel_NOT_BUILT test_channel_NOT_BUILT)
-endif()

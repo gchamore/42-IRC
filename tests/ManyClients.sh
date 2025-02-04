@@ -9,7 +9,6 @@ for i in $(seq 1 $CLIENTS); do
         echo -ne "PASS test \r\nNICK user$i\r\nUSER user$i 0 * :User $i\r\nJOIN #stress\r\n" | nc localhost 6667
     ) &
 done
-
 # Wait for all background processes to finish
 wait
 

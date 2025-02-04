@@ -1,5 +1,0 @@
-if(EXISTS "/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser[1]_tests.cmake")
-  include("/home/gchamore/42Paris/projects_on_duty/irc/build/test_command_parser[1]_tests.cmake")
-else()
-  add_test(test_command_parser_NOT_BUILT test_command_parser_NOT_BUILT)
-endif()
