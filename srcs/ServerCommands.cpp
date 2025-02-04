@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/04 15:17:14 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/04 15:44:36 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 		{
 			if (DEBUG_MODE)
 				std::cout << "CAP command received" << std::endl;
-			client.sendResponse("CAP * LS :multi-prefix sasl"); // Standard CAP LS response
+			client.sendResponse("CAP * LS :multi-prefix"); // Standard CAP LS response
 			if (DEBUG_MODE)
 				std::cout << "CAP LS sent" << std::endl;
 			return;
