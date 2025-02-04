@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/04 14:31:02 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/04 15:06:29 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,7 +295,7 @@ void Server::handleUserCommand(const CommandParser::ParsedCommand &command, Clie
 	client.sendResponse(":server NOTICE Auth :Username successfully set to " + command.params[0]);
 
 	// Puis envoyer le message de bienvenue
-	client.sendResponse(":server " + ServerMessages::RPL_WELCOME + client.getNickname() +
+	client.sendResponse(":server " + ServerMessages::RPL_WELCOME + " " + client.getNickname() +
 						" :Welcome to the IRC Network, " + client.getNickname() + "!");
 }
 
