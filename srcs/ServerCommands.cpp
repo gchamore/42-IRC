@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/04 15:06:29 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/04 15:13:47 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -529,7 +529,7 @@ void Server::handlePartCommand(const CommandParser::ParsedCommand &command, Clie
 {
 	if (command.params.empty())
 	{
-		client.sendResponse(":server" + ServerMessages::ERR_NEEDMOREPARAMS + "PART :Not enough parameters");
+		client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " PART :Not enough parameters");
 		return;
 	}
 	std::cout << "PART command received: " << command.params[0] << std::endl;
@@ -545,7 +545,7 @@ void Server::handlePartCommand(const CommandParser::ParsedCommand &command, Clie
 		{
 			if (!channels[channelName]->isMember(&client))
 			{
-				client.sendResponse(":server" + ServerMessages::ERR_NOTONCHANNEL + channelName + " :You're not on that channel");
+				client.sendResponse(":server " + ServerMessages::ERR_NOTONCHANNEL + " " + channelName + " :You're not on that channel");
 				continue;
 			}
 			// Annoncer le départ aux autres membres
@@ -563,7 +563,7 @@ void Server::handlePartCommand(const CommandParser::ParsedCommand &command, Clie
 		}
 		else
 		{
-			client.sendResponse(":server" + ServerMessages::ERR_NOSUCHCHANNEL + channelName + " :No such channel");
+			client.sendResponse(":server " + ServerMessages::ERR_NOSUCHCHANNEL + " " + channelName + " :No such channel");
 		}
 	}
 }
