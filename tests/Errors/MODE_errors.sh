@@ -12,7 +12,7 @@ sleep 1
 echo -ne "JOIN #test \r\n" >&3
 sleep 1
 echo -ne "MODE\r\n" >&3
-sleep 
+sleep 1
 echo -ne "MODE #nonexistentchannel\r\n" >&3
 sleep 1
 echo -ne "MODE #test \r\n" >&3
