@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 15:32:35 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/04 15:44:36 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/05 12:04:12 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,15 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 		if (command.command == "PASS")
 		{
 			if (command.params.empty())
-            {
+			{
 				client.sendResponse(":server " + ServerMessages::ERR_NEEDMOREPARAMS + " PASS :Not enough parameters");
 				return;
 			}
 			if (DEBUG_MODE)
 				std::cout << "is Authenticated: " << client.authenticated() << std::endl;
 			handlePassCommand(command, client);
-			std::cout << "User number : " << client.getId() << "\n" << std::endl;
+			std::cout << "User number : " << client.getId() << "\n"
+					  << std::endl;
 			std::cout << "PASS command received: " << command.params[0] << std::endl;
 			if (DEBUG_MODE)
 				std::cout << "is Authenticated: " << client.authenticated() << std::endl;
@@ -59,7 +60,6 @@ void Server::handleCommand(const CommandParser::ParsedCommand &command, Client &
 			client.sendResponse(":server " + ServerMessages::ERR_NOTREGISTERED + " * :You must authenticate first with PASS command");
 		return; // Silently ignore other commands until authenticated
 	}
-	
 
 	// Handle registration state commands
 	if (client.getState() == Client::REGISTERING)
@@ -152,23 +152,23 @@ bool Server::isValidNickname(const std::string &nickname)
 	const std::string specialChars = "-[]`^{}";
 
 	if (nickname.empty() || nickname.length() > Constants::MAX_NICKNAME_LENGTH)
-        return false;
+		return false;
 
-	if (!std::isalpha(nickname[0]) && nickname[0] != '[' && 
-        nickname[0] != ']' && nickname[0] != '\\' && 
-        nickname[0] != '`' && nickname[0] != '_' && 
-        nickname[0] != '^' && nickname[0] != '{' && 
-        nickname[0] != '|' && nickname[0] != '}')
-        return false;
+	if (!std::isalpha(nickname[0]) && nickname[0] != '[' &&
+		nickname[0] != ']' && nickname[0] != '\\' &&
+		nickname[0] != '`' && nickname[0] != '_' &&
+		nickname[0] != '^' && nickname[0] != '{' &&
+		nickname[0] != '|' && nickname[0] != '}')
+		return false;
 
 	for (size_t i = 1; i < nickname.length(); i++)
 	{
-        char c = nickname[i];
-        if (!std::isalnum(c) && c != '-' && c != '[' && 
-            c != ']' && c != '\\' && c != '`' && 
-            c != '_' && c != '^' && c != '{' && 
-            c != '|' && c != '}')
-            return false;
+		char c = nickname[i];
+		if (!std::isalnum(c) && c != '-' && c != '[' &&
+			c != ']' && c != '\\' && c != '`' &&
+			c != '_' && c != '^' && c != '{' &&
+			c != '|' && c != '}')
+			return false;
 	}
 	return true;
 }
@@ -252,19 +252,19 @@ bool Server::isValidUsername(const std::string &username)
 {
 	// Check length (1–10 characters)
 	if (username.empty() || username.length() > Constants::MAX_USERNAME_LENGTH)
-        return false;
+		return false;
 
 	// Check allowed characters
 	for (size_t i = 0; username[i]; ++i)
 	{
-        char c = username[i];
-        // Check for forbidden characters
-        if (c == ' ' || c == '@' || c == '\0' || c == '\r' || c == '\n')
-            return false;
-        // Check for allowed characters
-        if (!std::isalnum(c) && c != '-' && c != '.' && c != '_' && c != '~')
-            return false;
-    }
+		char c = username[i];
+		// Check for forbidden characters
+		if (c == ' ' || c == '@' || c == '\0' || c == '\r' || c == '\n')
+			return false;
+		// Check for allowed characters
+		if (!std::isalnum(c) && c != '-' && c != '.' && c != '_' && c != '~')
+			return false;
+	}
 
 	return true;
 }
@@ -352,7 +352,6 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 	}
 	std::cout << "JOIN command received: " << command.params[0] << std::endl;
 
-
 	// 2. Parse les canaux et mots de passe
 	std::vector<std::string> channelNames = split(command.params[0], ',');
 	std::vector<std::string> passwords;
@@ -360,7 +359,7 @@ void Server::handleJoinCommand(const CommandParser::ParsedCommand &command, Clie
 	{
 		passwords = split(command.params[1], ',');
 	}
-	
+
 	// Vérifier la limite maximale de canaux par client (typiquement 10)
 	if (client.getChannels(*this).size() + channelNames.size() >= 10)
 	{
@@ -488,7 +487,8 @@ void Server::handlePrivmsgCommand(const CommandParser::ParsedCommand &command, C
 	}
 
 	// Vérifier la longueur maximale du message (RFC 2812 section 2.3)
-	if (message.length() > 510) { // 512 - 2 (CRLF)
+	if (message.length() > 510)
+	{ // 512 - 2 (CRLF)
 		client.sendResponse(":server " + ServerMessages::ERR_UNKNOWNCOMMAND + " * :Message too long");
 		return;
 	}

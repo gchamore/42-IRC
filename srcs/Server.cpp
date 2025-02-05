@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Server.cpp                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/05 12:02:13 by gchamore          #+#    #+#             */
+/*   Updated: 2025/02/05 12:04:10 by gchamore         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/Server.hpp"
 
 // void handleCommand(const CommandParser::ParsedCommand &command, Client &client, const std::string &server_password);
@@ -47,9 +59,9 @@ void Server::setup_server()
 	}
 
 	// configure the server address struct
-	//address family: AF_INET for IPv4
-	//INADDR_ANY: listen on all network interfaces
-	//htons: convert port number to network byte order
+	// address family: AF_INET for IPv4
+	// INADDR_ANY: listen on all network interfaces
+	// htons: convert port number to network byte order
 	server_address.sin_family = AF_INET;
 	server_address.sin_addr.s_addr = INADDR_ANY;
 	server_address.sin_port = htons(port);

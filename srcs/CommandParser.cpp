@@ -6,7 +6,7 @@
 /*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 17:58:18 by gchamore          #+#    #+#             */
-/*   Updated: 2025/02/04 15:23:02 by gchamore         ###   ########.fr       */
+/*   Updated: 2025/02/05 11:02:27 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,6 @@ bool CommandParser::isValidCommand(const std::string &cmd)
 {
 	if (cmd.empty())
 		return false;
-
-	// Special case for CAP command
-	if (cmd == "CAP")
-		return true;
 
 	// Special case for testing max length commands
 	if (cmd.length() == Constants::MAX_COMMAND_LEN &&

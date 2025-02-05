@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ServerMessages.hpp                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/05 12:01:51 by gchamore          #+#    #+#             */
+/*   Updated: 2025/02/05 12:03:44 by gchamore         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SERVER_MESSAGES_HPP
 #define SERVER_MESSAGES_HPP
 
@@ -5,20 +17,20 @@
 
 namespace ServerMessages
 {
-	// Numeric Replies (001-099)
-	const std::string RPL_WELCOME = "001";
+    // Numeric Replies (001-099)
+    const std::string RPL_WELCOME = "001";
 
-	// Command responses (200-399)
-	const std::string RPL_ENDOFWHO = "315";
-	const std::string RPL_CHANNELMODEIS = "324";
-	const std::string RPL_NOTOPIC = "331";
-	const std::string RPL_TOPIC = "332";
-	const std::string RPL_INVITING = "341";
-	const std::string RPL_NAMREPLY = "353";
-	const std::string RPL_ENDOFNAMES = "366";
+    // Command responses (200-399)
+    const std::string RPL_ENDOFWHO = "315";
+    const std::string RPL_CHANNELMODEIS = "324";
+    const std::string RPL_NOTOPIC = "331";
+    const std::string RPL_TOPIC = "332";
+    const std::string RPL_INVITING = "341";
+    const std::string RPL_NAMREPLY = "353";
+    const std::string RPL_ENDOFNAMES = "366";
 
-	// WHO/WHOIS related responses (310-369)
-	const std::string RPL_WHOREPLY = "352";
+    // WHO/WHOIS related responses (310-369)
+    const std::string RPL_WHOREPLY = "352";
 
     // Error messages (400-599)
     const std::string ERR_NOSUCHNICK = "401";

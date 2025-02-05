@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   OperatorCommands.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: anferre <anferre@student.42.fr>            +#+  +:+       +#+        */
+/*   By: gchamore <gchamore@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 13:12:16 by anferre           #+#    #+#             */
-/*   Updated: 2025/02/04 12:29:24 by anferre          ###   ########.fr       */
+/*   Updated: 2025/02/05 12:04:07 by gchamore         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ static void handlePasswordMode(bool adding, const CommandParser::ParsedCommand &
 			return;
 		}
 		std::string password = command.params[paramIndex++];
-		std::cout << "password : $" << password << "$"<< std::endl;
+		std::cout << "password : $" << password << "$" << std::endl;
 		bool isWhitespaceOnly = true;
 		for (size_t i = 0; i < password.size(); ++i)
 		{
@@ -205,7 +205,6 @@ static void handlePasswordMode(bool adding, const CommandParser::ParsedCommand &
 	else
 	{
 		channel->removePassword();
-		
 	}
 }
 
