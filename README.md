@@ -82,7 +82,7 @@ Le serveur devra respecter les standards du protocole IRC et fonctionner avec un
 - **Gestion des connexions simultanées** : Assurer que plusieurs clients peuvent interagir sans bloquer le serveur.  
 - **Utilisation correcte de `poll()`** : Un seul appel pour gérer toutes les interactions (lecture, écriture, écoute).  
 - **Respect des standards IRC** : Implémentation stricte des commandes et du format des messages.  
-- **Interopérabilité** : Tester le serveur avec des clients IRC existants pour garantir son bon fonctionnement.  
+- **Interopérabilité** : Tester le serveur avec des clients IRC existants pour garantir son bon fonctionnement. Dans notre cas "Hexchat"  
 
 ---
 
@@ -109,7 +109,7 @@ Le serveur devra respecter les standards du protocole IRC et fonctionner avec un
 
 ## 👨‍💻 Équipe  
 
-👤 Antonin Ferre (Anferre) 
+👤 Antonin Ferre (Anferre)  
 👤 Grégoire Chamorel (Gchamore)  
 
 ---
