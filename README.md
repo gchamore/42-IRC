@@ -108,6 +108,8 @@ Le serveur devra respecter les standards du protocole IRC et fonctionner avec un
 ---
 
 ## 👨‍💻 Équipe  
+
+👤 Antonin Ferre (Anferre) 
 👤 Grégoire Chamorel (Gchamore)  
 
 ---
