@@ -5,7 +5,7 @@
 ft_irc est un projet visant à implémenter un **serveur IRC** en **C++ 98**.  
 L’objectif est de comprendre le fonctionnement des protocoles de communication sur Internet et de mettre en place un serveur capable de gérer plusieurs connexions clients.  
 
-Le serveur devra respecter les standards du protocole IRC et fonctionner avec un client IRC standard.
+Le serveur devra respecter les standards du protocole RFC 2812 IRC et fonctionner avec un client IRC standard.
 
 ---
 
